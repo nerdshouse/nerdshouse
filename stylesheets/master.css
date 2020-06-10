@@ -1,0 +1,170 @@
+body {
+	font-family: 'freight-sans-pro', 'Helvetica', 'Arial', sans-serif;
+	background-color: #fff;
+	color: #000;
+	position: relative;
+}
+
+a, a:visited, a:hover, a:link, a:active {
+	text-decoration: none;
+	color: #000;
+}
+
+section#pane_one {
+	display: block;
+	position: relative;
+	width: 100%;
+	text-align: center;
+	min-height: 450px;
+	height: 700px;
+}
+
+section#pane_two {
+	display: block;
+	position: relative;
+	width: 100%;
+	text-align: center;
+	background-color: #000;
+	color: #fff;
+	padding-bottom: 180px;
+}
+
+section#pane_three {
+	display: block;
+	position: relative;
+	width: 100%;
+	text-align: center;
+	min-height: 500px;
+	background-color: #fff;
+	color: #000;
+}
+
+section#pane_four {
+	display: block;
+	position: relative;
+	width: 50%;
+	text-align: center;
+	min-height: 100px;
+	background-color: #f73b29;
+	float: left;
+}
+
+section#pane_five {
+	display: block;
+	position: relative;
+	width: 50%;
+	text-align: center;
+	min-height: 100px;
+	background-color: #38a4f7;
+	float: right;
+}
+
+h1#logo {
+	position: absolute;
+	z-index: 0;
+	width: 350px;
+	height: 130px;
+	background-color: #000;
+	text-indent: -9999px;
+	top: 40%;
+	left: 40%;
+	margin-top: -65px;
+	margin-left: -33px;
+
+	background: url('nerdshouse.png') center center no-repeat;
+	background-size: 100%;
+}
+
+h2#hello {
+	position: relative;
+	top: 70%;
+	display: block;
+	width: auto;
+	font-weight: 300;
+	font-size: 30px;
+  line-height: 40px;
+
+	padding-left: 20px;
+	padding-right: 20px;
+
+	text-align: center;
+}
+
+h2#hello span {
+	font-weight: 700;
+}
+
+h3#future {
+	position: relative;
+	padding-top: 180px;
+	text-align: center;
+	width: 100%;
+	font-weight: 300;
+	font-size: 30px;
+  line-height: 40px;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+
+section#pane_two a {
+	color: #fff;
+	font-size: 24px;
+	max-width: 700px;
+	text-align: left;
+	display: block;
+	margin: 0 auto;
+	line-height: 40px;
+}
+
+section#pane_two a span {
+	font-weight: 700;
+	border-bottom: 3px solid #fff;
+  margin-right: 0px;
+}
+
+a#sayhi {
+	position: relative;
+	margin-top: 230px;
+	left: auto;
+	right: auto;
+	padding: 0px;
+	font-weight: 300;
+	font-size: 30px;
+	display: inline-block;
+	text-align: center;
+	line-height: 40px;
+	border-bottom: 3px solid #ccc;
+}
+
+aside#lightlogo {
+	position: absolute;
+	z-index: 0;
+	width: 32px;
+	height: 64px;
+	text-indent: -9999px;
+	bottom: 15px;
+	left: 50%;
+	margin-left: -16px;
+	z-index: 99;
+	background: url('logo.jpg') center center no-repeat;
+	background-size: 100%;
+}
+
+@media only all and (max-width: 700px){
+	section#pane_two a {
+		width: auto;
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+}
+
+@media only all and (max-width: 321px){
+	span.hello_word {
+		display: block;
+	}
+
+  section#pane_one {
+  	height: 550px;
+  }
+}
