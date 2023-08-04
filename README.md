@@ -1,8 +1,8 @@
-# Astroship - Astro Starter Template 🛸
+# Nerd's House - We build websites that work 🛸
 
-Astroship is a starter template for startups, marketing websites, landing pages & blog. Built with Astro & TailwindCSS.
+Websites tailored for your growth | Nerdshouse Technologies
 
-This Free Template is sponsored by [Web3Templates](https://web3templates.com)
+Design and Developed by [Axit Mehta](https://www.axitmehta.com)
 
 ## Live Demo
 
