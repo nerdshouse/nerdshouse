@@ -1,0 +1,45 @@
+---
+import Footer from "@components/footer.astro";
+import Navbar from "@components/navbar/navbar.astro";
+
+const { class: className } = Astro.props;
+---
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- <link rel="preload" as="image" href={src} alt="Hero" /> -->
+    
+  </head>
+  
+  <body>
+    <Navbar />
+    <div class:list={["max-w-screen-xl mx-auto px-5", className]}>
+      <div class="mx-auto prose prose-h2:underline my-16 max-w-3xl">
+        <slot />
+      </div>
+      <div class="text-center mt-8">
+          <a
+            href="/"
+            class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition"
+            >← Back to Home</a
+          >
+        </div> 
+    </div>
+    <Footer />
+    <style is:global>
+      /* Improve Page speed */
+      /* https://css-tricks.com/almanac/properties/c/content-visibility/ */
+      img {
+        content-visibility: auto;
+      }
+    </style>
+  </body>
+</html>
+
