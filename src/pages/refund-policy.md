@@ -21,8 +21,7 @@ Thank you for choosing NERD'S HOUSE TECHNOLOGIES LLP.
 
 
 
-If, for any reason, You are not completely satisfied with our services, We invite You to review our policy on refunds and returns.
-
+WE DO NOT ISSUE REFUND UNDER ANY CIRCUMSTANCES
 
 The following terms are applicable:
 
