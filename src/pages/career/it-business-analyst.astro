@@ -1,0 +1,88 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+import Container from "../../components/container.astro";
+import JobApplicationForm from "../../components/jobapplicationform.astro";
+---
+
+<Layout title="Career">
+  <Container>
+    <h2 class="text-3xl font-bold text-center">IT Business Analyst</h2>
+    <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-16">
+      <div class="text-slate-700">
+        <!-- <h2 class="font-medium text-2xl text-gray-800">Contact Nerd's House</h2>
+        <p class="text-lg leading-relaxed text-slate-500 mt-3">
+          Have something to say? We are here to help. Fill up the form or send
+          email or call phone.
+        </p>
+        <div class="mt-5"></div> -->
+
+        <p class="mb-4 text-sm">
+          Nerd's House is looking for IT Business Analysts with basic UX
+          concepts and has experience in handling clients and delivery.
+        </p>
+
+        <p class="mb-4 text-sm">
+          The following qualities will help you to become a nerd.
+        </p>
+
+        <ul class="list-disc text-sm font-light pl-8 mb-4">
+          <li>
+            Strong understanding of the WordPress technology and related
+            ecosystem
+          </li>
+          <li>
+            Understand the Requirement of the Businesses and convert into Scope
+            of work Document & Wireframes
+          </li>
+          <li>
+            Knowledge about domain media publishing, performance marketing,
+            e-commerce, paywall, monetisation tools, analytics tools, SEO
+          </li>
+          <li>Experience in managing customer deliveries end to end</li>
+          <li>Experience in coordinating between clients and technical team</li>
+          <li>
+            Exceptional ability in requirement gathering and conducting
+            meetings, presentations, discovery workshop with client and internal
+            team
+          </li>
+          <li>
+            Experience in tracking client feedback and initiating follow-up
+            action.
+          </li>
+          <li>
+            Knowledge in project planning & project documentation and creating
+            the business estimate, proposal, SRS and questionnaire for clients.
+          </li>
+          <li>Good communication and coordination skills</li>
+        </ul>
+
+        <h2 class="text-lg font-bold mb-2">Why Nerd's House?</h2>
+
+        <p class="mb-4 text-sm">
+          We have crafted our own culture and traditions in the past decade and
+          the highlights are:
+        </p>
+
+        <ul class="list-disc text-sm font-light pl-8 mb-4">
+          <li>Best employee benefits in the industry</li>
+          <li>Performance appraisal twice a year</li>
+          <li>Remote work option</li>
+          <li>Great work-life balance</li>
+          <li>Flexible leave policy</li>
+          <li>Flat structure, zero micro-management</li>
+        </ul>
+      </div>
+      <div>
+        <JobApplicationForm />
+      </div>
+    </div>
+    <div class="text-center mt-8">
+      <a
+        href="/career"
+        class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition"
+        >← Back to Career</a
+      >
+    </div>
+  </Container>
+</Layout>
