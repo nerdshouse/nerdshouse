@@ -3,6 +3,7 @@ import Container from "@components/container.astro";
 import Link from "@components/ui/link.astro";
 import Dropdown from "./dropdown.astro";
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
+import LOGO from "../../assets/Final.svg";
 
 const menuitems = [
   // {
@@ -20,7 +21,7 @@ const menuitems = [
   //   path: "/pricing",
   // },
   {
-    title:"Home",
+    title: "Home",
     path: "/",
   },
   {
@@ -30,6 +31,10 @@ const menuitems = [
   {
     title: "Blog",
     path: "/blog",
+  },
+  {
+    title: "Career",
+    path: "/career",
   },
   {
     title: "Contact",
@@ -42,9 +47,14 @@ const menuitems = [
   <header class="flex flex-col lg:flex-row justify-between items-center my-5">
     <Astronav>
       <div class="flex w-full lg:w-auto items-center justify-between">
-        <a href="/" class="text-lg"
-          ><img src="https://master.d2ykm0dhxz37vg.amplifyapp.com/static/media/Nerd.5b83ef636311d918ba69.png" alt="nerdshouse" width="100px" height="100px" />
-
+        <a href="/" class="text-lg">
+          <img src={LOGO} alt="Logo" class="h-20 w-24 md:h-20 md:w-28" />
+          <!-- <img
+            src="https://master.d2ykm0dhxz37vg.amplifyapp.com/static/media/Nerd.5b83ef636311d918ba69.png"
+            alt="nerdshouse"
+            width="100px"
+            height="100px"
+          /> -->
         </a>
         <div class="block lg:hidden">
           <MenuIcon class="w-4 h-4 text-gray-800" />
@@ -77,15 +87,24 @@ const menuitems = [
           }
         </ul>
         <div class="lg:hidden flex items-center mt-3 gap-4">
-          <Link href="mailto:nerd@nerdshouse.com" style="muted" block size="md">nerd@nerdshouse.com</Link>
-          <Link href="https://payments.cashfree.com/forms/nerdshouse" size="md" block>Pay Now</Link>
+          <Link href="mailto:nerd@nerdshouse.com" style="muted" block size="md">
+            nerd@nerdshouse.com
+          </Link>
+          <Link
+            href="https://payments.cashfree.com/forms/nerdshouse"
+            size="md"
+            block>
+            Pay Now
+          </Link>
         </div>
       </MenuItems>
     </Astronav>
     <div>
       <div class="hidden lg:flex items-center gap-4">
         <a href="mailto:nerd@nerdshouse.com">nerd@nerdshouse.com</a>
-        <Link href="https://payments.cashfree.com/forms/nerdshouse" size="md">Pay Now</Link>
+        <Link href="https://payments.cashfree.com/forms/nerdshouse" size="md">
+          Pay Now
+        </Link>
       </div>
     </div>
   </header>
