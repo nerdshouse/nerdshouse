@@ -1,0 +1,77 @@
+---
+import { getCollection } from "astro:content";
+import { Picture } from "@astrojs/image/components";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import Sectionhead from "@components/sectionhead.astro";
+
+// Filter team entries with 'draft: false' & date before current date
+const publishedTeamMembers = await getCollection("team", ({ data }) => {
+  return !data.draft && data.publishDate < new Date();
+});
+---
+
+<Layout title="Career | Nerdshouse Technologies">
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">Career</Fragment>
+      <Fragment slot="desc">Let's build something great together.</Fragment>
+    </Sectionhead>
+
+    <div class="flex flex-col justify-center gap-3 mx-auto max-w-3xl mt-16">
+      <h2 class="font-bold text-3xl text-center text-gray-800">
+        Empowering the world with Technology.
+      </h2>
+      <p class="text-lg mx-auto text-center max-w-3xl text-slate-500">
+        Though our team is relatively small, we are proud of the company culture
+        we have built that our employees love to come to work every day.
+        <br />
+        So, Come and check out if you are planning to advance your career and gain
+        hands-on experience in a thriving and supportive workplace. We promise you,
+        we can definitely be your extended family.
+      </p>
+    </div>
+    <ul class="grid md:grid-cols-3 gap-10 mx-auto max-w-4xl mt-12">
+      <li
+        class="border border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
+        <a href={`/career/frontend-developer`}>
+          <div class="group">
+            <div class="m-6 flex flex-col justify-between md:h-20">
+              <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
+                Front-end Developer
+              </h2>
+              <h3 class="text-sm text-indigo-600">More Details</h3>
+            </div>
+          </div>
+        </a>
+      </li>
+      <li
+        class="border border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
+        <a href={`/career/it-business-analyst`}>
+          <div class="group">
+            <div class="m-6 flex flex-col justify-between md:h-20">
+              <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
+                IT Business Analyst
+              </h2>
+              <h3 class="text-sm text-indigo-600">More Details</h3>
+            </div>
+          </div>
+        </a>
+      </li>
+      <li
+        class="border-2 border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
+        <a href={`/career/digital-marketing-manager`}>
+          <div class="group">
+            <div class="m-6 flex flex-col justify-between md:h-20">
+              <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
+                Digital Marketing Manager
+              </h2>
+              <h3 class="text-sm text-indigo-600">More Details</h3>
+            </div>
+          </div>
+        </a>
+      </li>
+    </ul>
+
+  </Container>
+</Layout>

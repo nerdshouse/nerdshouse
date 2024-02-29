@@ -1,0 +1,79 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+import Container from "../../components/container.astro";
+import JobApplicationForm from "../../components/jobapplicationform.astro";
+---
+
+<Layout title="Career">
+  <Container>
+    <h2 class="text-3xl font-bold text-center">Front-end Developers</h2>
+    <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-16">
+      <div class="text-slate-700">
+        <!-- <h2 class="font-medium text-2xl text-gray-800">Contact Nerd's House</h2>
+        <p class="text-lg leading-relaxed text-slate-500 mt-3">
+          Have something to say? We are here to help. Fill up the form or send
+          email or call phone.
+        </p>
+        <div class="mt-5"></div> -->
+
+        <p class="mb-4 text-sm">
+          Nerd's House is looking for HTML/CSS ninjas with WordPress theme
+          development experience.
+        </p>
+
+        <p class="mb-4 text-sm">
+          The following qualities will help you to become a nerd.
+        </p>
+
+        <ul class="list-disc text-sm font-light pl-8 mb-4">
+          <li>
+            Strong development expertise using core tools HTML5, CSS3,
+            JavaScript, and PHP
+          </li>
+          <li>
+            Experience working with WordPress, building custom WordPress themes
+            and/or plugins, and configuring content using custom fields
+          </li>
+          <li>Experience using CSS Grid, CSS Flexbox</li>
+          <li>Experience using Advanced Custom Fields</li>
+          <li>Basic understanding of JS Frameworks like React and Angular</li>
+        </ul>
+
+        <h2 class="text-lg font-bold mb-2">Why Nerd's House?</h2>
+
+        <p class="mb-4 text-sm">
+          We have crafted our own culture and traditions in the past decade and
+          the highlights are:
+        </p>
+
+        <ul class="list-disc text-sm font-light pl-8 mb-4">
+          <li>International client exposure</li>
+          <li>Best employee benefits in the industry</li>
+          <li>Performance appraisal twice a year</li>
+          <li>Availability of remote work option</li>
+          <li>Full stacked pantry in office</li>
+          <li>Absence of leave restraints</li>
+          <li>No micro-management</li>
+          <li>Frequent outings and pizza parties</li>
+        </ul>
+
+        <p class="mb-4 text-sm">
+          So if you are looking for a fairyland to spread your wings without
+          being stifled by the constraints of the usual corporate culture look
+          no further. We are happy to welcome you to our family.
+        </p>
+      </div>
+      <div>
+        <JobApplicationForm />
+      </div>
+    </div>
+    <div class="text-center mt-8">
+      <a
+        href="/career"
+        class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition"
+        >← Back to Career</a
+      >
+    </div> 
+  </Container>
+</Layout>

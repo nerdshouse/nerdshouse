@@ -5,7 +5,6 @@ import Navbar from "@components/navbar/navbar.astro";
 const { class: className } = Astro.props;
 ---
 
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,9 +14,8 @@ const { class: className } = Astro.props;
     <meta name="generator" content={Astro.generator} />
 
     <!-- <link rel="preload" as="image" href={src} alt="Hero" /> -->
-    
   </head>
-  
+
   <body>
     <Navbar />
     <div class:list={["max-w-screen-xl mx-auto px-5", className]}>
@@ -25,12 +23,12 @@ const { class: className } = Astro.props;
         <slot />
       </div>
       <div class="text-center mt-8">
-          <a
-            href="/"
-            class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition"
-            >← Back to Home</a
-          >
-        </div> 
+        <a
+          href="/"
+          class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition"
+          >← Back to Home</a
+        >
+      </div>
     </div>
     <Footer />
     <style is:global>
@@ -42,4 +40,3 @@ const { class: className } = Astro.props;
     </style>
   </body>
 </html>
-
