@@ -78,7 +78,8 @@ Refunds may be provided under the following circumstances:
 
 - If there are major defects or errors in the delivered service that render it unusable or significantly different from what was promised.
 - If we are unable to fulfill the service due to unforeseen circumstances or technical limitations on our end.
-
+  
+  Please note: In case you are eligible for the refund, it will take around 45 days to release your payment back to the source.
 
 ## Non-Refundable Services
 
