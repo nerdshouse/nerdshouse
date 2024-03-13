@@ -1,62 +1,108 @@
 ---
-import { getCollection } from "astro:content";
-import Layout from "@layouts/Layout.astro";
-import Container from "@components/container.astro";
+import Container from "../../components/container.astro";
+import { API_BASE_URL } from "../../constants";
+import Layout from "../../layouts/Layout.astro";
 
-// Generate a new path for every collection entry
 export async function getStaticPaths() {
-  const blogEntries = await getCollection("blog");
-  return blogEntries.map((entry) => ({
-    params: { slug: entry.slug },
-    props: { entry },
-  }));
+  const response = await fetch(API_BASE_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query: `
+        query AllSlugs {
+          posts {
+            nodes {
+              slug
+            }
+          }
+        }
+        `,
+    }),
+  });
+
+  // destructure data from our JSON
+  const { data } = await response.json();
+
+  //  assign the array of nodes to "posts" variable for usability
+  const posts = data.posts.nodes;
+
+  // transform our array of {slug: "post-slug"} objects into an array of {params: {slug: "post-slug"}}
+  const paths = posts.map((post) => {
+    return { params: post };
+  });
+
+  return paths;
 }
 
-// Get the entry directly from the prop on render
-const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { slug } = Astro.params;
+
+const singleResponse = await fetch(API_BASE_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    query: `
+        query SinglePost($id: ID = "${slug}") {
+          post(idType: SLUG, id: $id) {
+            date
+            content
+            author{
+              node{
+                name
+              }
+            }
+            title
+            featuredImage {
+              node {
+                sourceUrl
+              }
+            }
+          }
+        }
+        `,
+  }),
+});
+
+// destructure data from our JSON
+const { data } = await singleResponse.json();
+
+//  assign the post info to singlePost variable for usability
+const singlePost = data.post;
 ---
 
-<Layout title={entry.data.title}>
+<Layout title="Blog | Nerdshouse Technologies">
   <Container>
-    <div class="mx-auto max-w-3xl mt-14">
-      <span class="text-blue-400 uppercase tracking-wider text-sm font-medium">
-        {entry.data.category}
-      </span>
+    <article class="mx-auto max-w-3xl text-wrap mt-14">
       <h1
         class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight">
-        {entry.data.title}
+        {singlePost.title}
       </h1>
       <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap">
-        <span class="text-gray-400">
-          {entry.data.author}
+        <span class="text-gray-400 capitalize">
+          {singlePost?.author?.node?.name}
         </span>
         <span class="text-gray-400">•</span>
-        <time
-          class="text-gray-400"
-          datetime={entry.data.publishDate.toISOString()}>
-          {entry.data.publishDate.toDateString()}
-        </time>
-        <span class="text-gray-400 hidden md:block">•</span>
-        <div class="w-full md:w-auto flex flex-wrap gap-3">
+        <span class="text-gray-400">
           {
-            entry.data.tags.map((tag) => (
-              <span class="text-sm text-gray-500">#{tag}</span>
-            ))
+            new Date(singlePost.date).toLocaleDateString("en-us", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
           }
-        </div>
+        </span>
+        <!-- <Image class="w-full object-cover aspect-2/3 mb-5" alt="" src={singlePost.featuredImage.node.sourceUrl} width={1500} height={1000} /> -->
+        <!-- We can use the set:html directive with a self closing tag to output raw html -->
       </div>
-    </div>
-
-    <div class="mx-auto prose prose-lg mt-6 max-w-3xl">
-      <Content />
-    </div>
-    <div class="text-center mt-8">
-      <a
-        href="/blog"
-        class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition"
-        >← Back to Blog</a
-      >
-    </div>
+      <div class="mx-auto prose prose-lg mt-6 max-w-3xl">
+        <div set:html={singlePost.content} />
+      </div>
+    </article>
   </Container>
+  <div class="text-center mt-8">
+    <a
+      href="/blog"
+      class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition"
+      >← Back to Blog</a
+    >
+  </div>
 </Layout>
