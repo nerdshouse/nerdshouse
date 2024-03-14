@@ -41,24 +41,25 @@ const singleResponse = await fetch(API_BASE_URL, {
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     query: `
-        query SinglePost($id: ID = "${slug}") {
-          post(idType: SLUG, id: $id) {
-            date
-            content
-            author{
-              node{
-                name
-              }
+      query SinglePost($slug: String!) {
+        postBy(slug: $slug) {
+          date
+          content
+          author {
+            node {
+              name
             }
-            title
-            featuredImage {
-              node {
-                sourceUrl
-              }
+          }
+          title
+          featuredImage {
+            node {
+              sourceUrl
             }
           }
         }
-        `,
+      }
+    `,
+    variables: { slug }
   }),
 });
 
