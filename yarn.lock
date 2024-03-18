@@ -80,7 +80,7 @@
     unist-util-visit "^4.1.0"
     vfile "^5.3.2"
 
-"@astrojs/mdx@^0.16.0":
+"@astrojs/mdx@^0.16.2":
   version "0.16.2"
   resolved "https://registry.npmjs.org/@astrojs/mdx/-/mdx-0.16.2.tgz"
   integrity sha512-ZNOdBW7ExnWM50+wubg8iw5J1jkUVkTHAJXQt3IwH4TVIOC3mQyr5hDPfN2/pwG9Ch9RNlI+7nsDFNaHY0AeaA==
@@ -110,7 +110,7 @@
   dependencies:
     prismjs "^1.28.0"
 
-"@astrojs/sitemap@^1.0.1":
+"@astrojs/sitemap@^1.4.0":
   version "1.4.0"
   resolved "https://registry.npmjs.org/@astrojs/sitemap/-/sitemap-1.4.0.tgz"
   integrity sha512-uTK77kcg7iTiik+u7rTGG6vK4ZWTfYMaVnFndOVQrLzaE5xivmQgIbVLtlN+xRcME5n/m6vYQFJmogFR+elGCw==
@@ -118,7 +118,7 @@
     sitemap "^7.1.1"
     zod "^3.17.3"
 
-"@astrojs/tailwind@^3.0.1":
+"@astrojs/tailwind@^3.1.3":
   version "3.1.3"
   resolved "https://registry.npmjs.org/@astrojs/tailwind/-/tailwind-3.1.3.tgz"
   integrity sha512-10S1omrv5K5HRVAZ0fBgN5vQykn2HRL332LAVFyBASMn1Ff6gDfSK+CPUeUu94eZUOEaPnECLK8EHAqZ8iY9CA==

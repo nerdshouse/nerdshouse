@@ -1,9 +1,8 @@
 ---
-import { getCollection } from "astro:content";
-import { Picture } from "@astrojs/image/components";
-import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import Sectionhead from "@components/sectionhead.astro";
+import Layout from "@layouts/Layout.astro";
+import { getCollection } from "astro:content";
 
 // Filter team entries with 'draft: false' & date before current date
 const publishedTeamMembers = await getCollection("team", ({ data }) => {
@@ -32,7 +31,7 @@ const publishedTeamMembers = await getCollection("team", ({ data }) => {
       </p>
     </div>
     <ul class="grid md:grid-cols-3 gap-10 mx-auto max-w-4xl mt-12">
-      <li
+      <!-- <li
         class="border border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
         <a href={`/career/frontend-developer`}>
           <div class="group">
@@ -44,14 +43,40 @@ const publishedTeamMembers = await getCollection("team", ({ data }) => {
             </div>
           </div>
         </a>
-      </li>
+      </li> -->
+      <!-- <li
+      class="border border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
+      <a href={`/career/it-business-analyst`}>
+        <div class="group">
+          <div class="m-6 flex flex-col justify-between md:h-20">
+            <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
+              IT Business Analyst
+            </h2>
+            <h3 class="text-sm text-indigo-600">More Details</h3>
+          </div>
+        </div>
+      </a>
+    </li>
+    <li
+      class="border-2 border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
+      <a href={`/career/digital-marketing-manager`}>
+        <div class="group">
+          <div class="m-6 flex flex-col justify-between md:h-20">
+            <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
+              Digital Marketing Manager
+            </h2>
+            <h3 class="text-sm text-indigo-600">More Details</h3>
+          </div>
+        </div>
+      </a>
+    </li> -->
       <li
         class="border border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
-        <a href={`/career/it-business-analyst`}>
+        <a href={`/career/wordpress-developer`}>
           <div class="group">
             <div class="m-6 flex flex-col justify-between md:h-20">
               <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
-                IT Business Analyst
+                WordPress Developer
               </h2>
               <h3 class="text-sm text-indigo-600">More Details</h3>
             </div>
@@ -59,12 +84,25 @@ const publishedTeamMembers = await getCollection("team", ({ data }) => {
         </a>
       </li>
       <li
-        class="border-2 border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
-        <a href={`/career/digital-marketing-manager`}>
+        class="border border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
+        <a href={`/career/graphic-designer`}>
           <div class="group">
             <div class="m-6 flex flex-col justify-between md:h-20">
               <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
-                Digital Marketing Manager
+                Graphic Designer
+              </h2>
+              <h3 class="text-sm text-indigo-600">More Details</h3>
+            </div>
+          </div>
+        </a>
+      </li>
+      <li
+        class="border border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
+        <a href={`/career/content-writer`}>
+          <div class="group">
+            <div class="m-6 flex flex-col justify-between md:h-20">
+              <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
+                Content Writer
               </h2>
               <h3 class="text-sm text-indigo-600">More Details</h3>
             </div>
@@ -72,6 +110,5 @@ const publishedTeamMembers = await getCollection("team", ({ data }) => {
         </a>
       </li>
     </ul>
-
   </Container>
 </Layout>
