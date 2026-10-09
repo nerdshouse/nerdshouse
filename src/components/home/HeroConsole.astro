@@ -1,0 +1,785 @@
+---
+/*
+  The hero demonstration: three runs through a system Nerdshouse would build.
+  Scenarios 1 and 2 are modelled on patterns from real projects (booking platforms,
+  Briyo checkout recovery). Scenario 3 is an illustrative AI scenario, labelled as such.
+  The server renders scenario 1 in its completed state, so the panel is meaningful without JS.
+*/
+type State = "ok" | "wait" | "fail" | "run";
+interface Step {
+  verb: string;
+  detail: string;
+  t: string;
+  retry?: string; // shown as a failure first, then recovered
+  approval?: string; // shown as waiting for a person first
+}
+interface Scenario {
+  id: string;
+  tab: string;
+  pattern: string;
+  sources: number[];
+  steps: Step[];
+  outputs: { title: string; detail: string }[];
+  summary: string;
+}
+
+const SOURCES = ["WhatsApp", "Website & forms", "Store & checkout", "Payment gateway", "Support inbox", "Spreadsheets"];
+
+const SCENARIOS: Scenario[] = [
+  {
+    id: "booking",
+    tab: "Site-visit booking",
+    pattern: "Pattern from booking platforms we have built",
+    sources: [0, 1, 3],
+    steps: [
+      { verb: "Receive", detail: "Booking request from the website — Adajan, Surat, Saturday morning.", t: "10:42:03" },
+      { verb: "Verify", detail: "Customer confirms their number with a one-time code on WhatsApp.", t: "10:42:31" },
+      { verb: "Validate", detail: "Slot is free and the area is covered. Duplicate check passed.", t: "10:42:32" },
+      {
+        verb: "Collect",
+        detail: "Site-visit fee paid. Payment confirmation recorded once, even when the webhook arrives twice.",
+        t: "10:43:10",
+        retry: "Payment webhook timed out — retrying (attempt 2 of 3)",
+      },
+      { verb: "Assign", detail: "Nearest available fitting partner is offered the job and accepts.", t: "10:44:02" },
+      { verb: "Record", detail: "Booking, payment and commission saved with an audit entry.", t: "10:44:03" },
+    ],
+    outputs: [
+      { title: "Customer", detail: "WhatsApp confirmation with date and visit details" },
+      { title: "Operations", detail: "Booking appears on the admin dashboard" },
+      { title: "Fitting partner", detail: "Job and address in their app" },
+    ],
+    summary:
+      "A customer books a site visit on the website, verifies by WhatsApp, pays, and a fitting partner is assigned. A failed payment webhook is retried automatically and recorded once.",
+  },
+  {
+    id: "checkout",
+    tab: "Abandoned checkout",
+    pattern: "Pattern from our Briyo Supplements recovery board",
+    sources: [2, 0],
+    steps: [
+      { verb: "Receive", detail: "Checkout provider reports an abandoned cart through a webhook.", t: "14:05:11" },
+      { verb: "Verify", detail: "Shared secret checked. Unsigned requests are rejected and logged.", t: "14:05:11" },
+      { verb: "Store", detail: "Cart saved with its full original payload, so nothing is lost if formats change.", t: "14:05:12" },
+      { verb: "Watch", detail: "No one has called the customer in 6 hours, so the cart is marked overdue.", t: "20:05:12" },
+      {
+        verb: "Alert",
+        detail: "Overdue carts go to the operations lead as a WhatsApp digest.",
+        t: "20:05:40",
+        retry: "Messaging API rate-limited — backing off and retrying",
+      },
+      { verb: "Record", detail: "Team logs the call outcome and notes. Everyone sees the same status.", t: "20:31:07" },
+    ],
+    outputs: [
+      { title: "Recovery board", detail: "One shared list with status and notes per cart" },
+      { title: "Operations lead", detail: "WhatsApp digest of overdue carts" },
+      { title: "Owner", detail: "Response times visible, not guessed" },
+    ],
+    summary:
+      "An abandoned checkout arrives by webhook, is verified and stored, and becomes overdue when nobody follows up. The operations lead gets a WhatsApp digest, retried after a rate limit.",
+  },
+  {
+    id: "agent",
+    tab: "Refund request · AI agent",
+    pattern: "Illustrative AI workflow — how we design agents",
+    sources: [4, 2],
+    steps: [
+      { verb: "Receive", detail: "Email: “My order arrived damaged — can you help?”", t: "09:12:44" },
+      { verb: "Understand", detail: "Agent classifies it as a damaged item and finds the order number.", t: "09:12:46" },
+      { verb: "Look up", detail: "Reads the order and delivery status. Its access is read-only.", t: "09:12:47" },
+      { verb: "Propose", detail: "Drafts a replacement order and a reply, with its reasoning.", t: "09:12:51" },
+      {
+        verb: "Approve",
+        detail: "Support lead reviews the draft and approves it.",
+        t: "09:20:15",
+        approval: "Replacements change money and stock — waiting for a person",
+      },
+      { verb: "Act", detail: "Replacement created, reply sent, and the full trace kept for review.", t: "09:20:17" },
+    ],
+    outputs: [
+      { title: "Customer", detail: "A specific, correct reply within minutes" },
+      { title: "Support lead", detail: "Approves the decision instead of retyping it" },
+      { title: "Engineering", detail: "Every tool call and decision on record" },
+    ],
+    summary:
+      "An AI agent reads a support email, looks up the order with read-only access and drafts a replacement. Because the action changes money and stock, it waits for a person to approve before acting.",
+  },
+];
+
+const first = SCENARIOS[0];
+---
+
+<div class="console" data-console>
+  <div class="cn-top">
+    <div class="cn-tabs" role="tablist" aria-label="Example runs">
+      {
+        SCENARIOS.map((s, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`cn-tab-${s.id}`}
+            aria-selected={i === 0 ? "true" : "false"}
+            aria-controls="cn-panel"
+            tabindex={i === 0 ? 0 : -1}
+            data-index={i}
+          >
+            {s.tab}
+          </button>
+        ))
+      }
+    </div>
+    <div class="cn-controls">
+      <span class="cn-run mono" data-run-status data-state="ok"><span class="dot"></span><span data-run-text>Run complete</span></span>
+      <button type="button" class="cn-replay" data-replay>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"></path></svg>
+        Replay
+      </button>
+    </div>
+  </div>
+
+  <div class="cn-body" id="cn-panel" role="tabpanel" aria-labelledby="cn-tab-booking" data-panel>
+    <p class="sr-only" data-summary>{first.summary}</p>
+
+    <div class="cn-col cn-sources">
+      <p class="cn-h mono">Systems you already use</p>
+      <ul class="src-list">
+        {
+          SOURCES.map((name, i) => (
+            <li class="src" data-src={i} data-active={first.sources.includes(i) ? "" : undefined}>
+              <span class="src-led" />
+              {name}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="cn-col cn-layer">
+      <div class="cn-layer-head">
+        <p class="cn-h mono">The layer we build</p>
+        <p class="cn-pattern mono" data-pattern>{first.pattern}</p>
+      </div>
+      <ol class="steps" data-steps>
+        {
+          first.steps.map((st, i) => (
+            <li class="step" data-state="ok" data-i={i}>
+              <span class="step-mark">
+                <span class="dot" />
+              </span>
+              <span class="step-verb">{st.verb}</span>
+              <span class="step-detail">{st.detail}</span>
+              <span class="step-t mono">{st.t}</span>
+              <span class="step-note mono" hidden />
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <div class="cn-col cn-outputs">
+      <p class="cn-h mono">What people see</p>
+      <ul class="out-list" data-outputs>
+        {
+          first.outputs.map((o) => (
+            <li class="out is-on">
+              <span class="out-title">{o.title}</span>
+              <span class="out-detail">{o.detail}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <details class="cn-log">
+      <summary class="mono">Event log <span class="faint" data-log-count>6 events</span></summary>
+      <ol class="log mono" data-log>
+        {
+          first.steps.map((st) => (
+            <li>
+              <span class="faint">{st.t}</span> <span class="log-ok">ok</span> {st.verb.toLowerCase()}
+            </li>
+          ))
+        }
+      </ol>
+    </details>
+  </div>
+
+  <script type="application/json" data-scenarios set:html={JSON.stringify({ SOURCES, SCENARIOS })} />
+</div>
+
+<style>
+  .console {
+    --c-bg: #0d0f13;
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-l);
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(255, 106, 43, 0.07), transparent 55%),
+      var(--c-bg);
+    overflow: hidden;
+    box-shadow: 0 60px 120px -60px rgba(0, 0, 0, 0.9);
+  }
+  .cn-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    border-bottom: 1px solid var(--ink-line);
+    background: rgba(255, 255, 255, 0.015);
+  }
+  .cn-tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 100%;
+  }
+  .cn-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .cn-tabs button {
+    flex: none;
+    min-height: 40px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-mute);
+    font-size: 0.9rem;
+    font-weight: 550;
+    white-space: nowrap;
+  }
+  .cn-tabs button:hover {
+    color: var(--ink-text);
+  }
+  .cn-tabs button[aria-selected="true"] {
+    color: var(--ink-text);
+    background: var(--ink-2);
+    border-color: var(--ink-line);
+  }
+  .cn-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+  }
+  .cn-run {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ink-mute);
+    font-size: 0.75rem;
+  }
+  .cn-replay {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--ink-line);
+    background: transparent;
+    color: var(--ink-text);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .cn-replay:hover {
+    border-color: var(--ink-mute);
+  }
+  .cn-replay svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .cn-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .cn-col {
+    padding: 20px;
+  }
+  .cn-h {
+    color: var(--ink-faint);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  /* sources */
+  .src-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .src {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--ink-line-soft);
+    color: var(--ink-faint);
+    font-size: 0.88rem;
+    transition: color 0.3s var(--ease), border-color 0.3s var(--ease), background-color 0.3s var(--ease);
+  }
+  .src-led {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink-line);
+    transition: background-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .src[data-active] {
+    color: var(--ink-text);
+    border-color: var(--ink-line);
+    background: var(--ink-1);
+  }
+  .src[data-active] .src-led {
+    background: var(--signal);
+    box-shadow: 0 0 0 3px rgba(255, 106, 43, 0.18);
+  }
+
+  /* layer */
+  .cn-layer {
+    border-block: 1px solid var(--ink-line);
+    background: rgba(255, 255, 255, 0.012);
+  }
+  .cn-layer-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 4px 16px;
+    margin-bottom: 4px;
+  }
+  .cn-pattern {
+    color: var(--signal);
+    font-size: 0.72rem;
+    margin-bottom: 14px;
+  }
+  .steps {
+    display: grid;
+    position: relative;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 22px 92px 1fr;
+    grid-template-areas: "mark verb detail" ". note note";
+    column-gap: 12px;
+    align-items: start;
+    padding: 11px 0;
+    border-top: 1px solid var(--ink-line-soft);
+    transition: opacity 0.35s var(--ease);
+  }
+  .step:first-child {
+    border-top: 0;
+  }
+  .step-mark {
+    grid-area: mark;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+    border-radius: 50%;
+    border: 1px solid var(--ink-line);
+  }
+  .step-verb {
+    grid-area: verb;
+    font-family: var(--font-display);
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .step-detail {
+    grid-area: detail;
+    color: var(--ink-mute);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .step-t {
+    display: none;
+  }
+  .step-note {
+    grid-area: note;
+    margin-top: 6px;
+    font-size: 0.74rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    width: fit-content;
+    max-width: 100%;
+  }
+  .step[data-state="pending"] {
+    opacity: 0.32;
+  }
+  .step[data-state="pending"] .dot {
+    background: var(--ink-line);
+  }
+  .step[data-state="run"] .step-mark {
+    border-color: var(--info);
+  }
+  .step[data-state="fail"] .step-mark {
+    border-color: var(--fail);
+  }
+  .step[data-state="wait"] .step-mark {
+    border-color: var(--wait);
+  }
+  .step[data-state="ok"] .step-mark {
+    border-color: rgba(61, 220, 151, 0.45);
+  }
+  .step[data-state="run"] .dot {
+    animation: blink 0.8s steps(2) infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0.2;
+    }
+  }
+  .step-note[data-kind="fail"] {
+    color: var(--fail);
+    background: rgba(255, 92, 122, 0.08);
+    border: 1px solid rgba(255, 92, 122, 0.25);
+  }
+  .step-note[data-kind="wait"] {
+    color: var(--wait);
+    background: rgba(255, 194, 61, 0.08);
+    border: 1px solid rgba(255, 194, 61, 0.25);
+  }
+  .step-note[data-kind="ok"] {
+    color: var(--ok);
+    background: rgba(61, 220, 151, 0.07);
+    border: 1px solid rgba(61, 220, 151, 0.22);
+  }
+
+  /* outputs */
+  .out-list {
+    display: grid;
+    gap: 8px;
+  }
+  .out {
+    display: grid;
+    gap: 2px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--ink-line-soft);
+    opacity: 0.35;
+    transform: translateX(-4px);
+    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease), border-color 0.4s var(--ease);
+  }
+  .out.is-on {
+    opacity: 1;
+    transform: none;
+    border-color: var(--ink-line);
+    background: var(--ink-1);
+  }
+  .out-title {
+    font-weight: 650;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .out.is-on .out-title::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ok);
+  }
+  .out-detail {
+    color: var(--ink-mute);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+
+  /* log */
+  .cn-log {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--ink-line);
+  }
+  .cn-log summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 20px;
+    color: var(--ink-mute);
+    font-size: 0.75rem;
+    display: flex;
+    gap: 10px;
+    min-height: 44px;
+    align-items: center;
+  }
+  .cn-log summary::-webkit-details-marker {
+    display: none;
+  }
+  .cn-log summary::before {
+    content: "›";
+    font-size: 1rem;
+    transition: transform 0.2s var(--ease);
+  }
+  .cn-log[open] summary::before {
+    transform: rotate(90deg);
+  }
+  .log {
+    padding: 0 20px 16px;
+    display: grid;
+    gap: 4px;
+    font-size: 0.74rem;
+    color: var(--ink-mute);
+    max-height: 210px;
+    overflow: auto;
+  }
+  .log :global(.log-ok) {
+    color: var(--ok);
+  }
+  .log :global(.log-fail) {
+    color: var(--fail);
+  }
+  .log :global(.log-wait) {
+    color: var(--wait);
+  }
+  .log :global(.log-run) {
+    color: var(--info);
+  }
+
+  @media (min-width: 1024px) {
+    .cn-body {
+      grid-template-columns: minmax(190px, 0.75fr) minmax(0, 2.1fr) minmax(220px, 0.95fr);
+    }
+    .cn-col {
+      padding: 26px;
+    }
+    .cn-layer {
+      border-block: 0;
+      border-inline: 1px solid var(--ink-line);
+    }
+    .src-list {
+      flex-direction: column;
+      flex-wrap: nowrap;
+    }
+    .src {
+      position: relative;
+    }
+    .src[data-active]::after {
+      content: "";
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      width: 27px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--signal), transparent);
+    }
+    .step {
+      grid-template-columns: 22px 104px 1fr 64px;
+      grid-template-areas: "mark verb detail t" ". note note note";
+    }
+    .step-t {
+      display: block;
+      grid-area: t;
+      text-align: right;
+      color: var(--ink-faint);
+      font-size: 0.7rem;
+      padding-top: 3px;
+    }
+    .cn-log[open] .log {
+      max-height: 160px;
+    }
+  }
+  @media (max-width: 480px) {
+    .step {
+      grid-template-columns: 22px 1fr;
+      grid-template-areas: "mark verb" ". detail" ". note";
+      row-gap: 2px;
+    }
+    .cn-col {
+      padding: 16px;
+    }
+    .cn-run {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  type Step = { verb: string; detail: string; t: string; retry?: string; approval?: string };
+  type Scenario = { id: string; tab: string; pattern: string; sources: number[]; steps: Step[]; outputs: { title: string; detail: string }[]; summary: string };
+
+  const root = document.querySelector<HTMLElement>("[data-console]");
+  if (root) {
+    const data = JSON.parse(root.querySelector("[data-scenarios]")!.textContent!) as { SOURCES: string[]; SCENARIOS: Scenario[] };
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panel = root.querySelector<HTMLElement>("[data-panel]")!;
+    const stepsEl = root.querySelector<HTMLOListElement>("[data-steps]")!;
+    const outEl = root.querySelector<HTMLUListElement>("[data-outputs]")!;
+    const logEl = root.querySelector<HTMLOListElement>("[data-log]")!;
+    const logCount = root.querySelector<HTMLElement>("[data-log-count]")!;
+    const pattern = root.querySelector<HTMLElement>("[data-pattern]")!;
+    const summary = root.querySelector<HTMLElement>("[data-summary]")!;
+    const runStatus = root.querySelector<HTMLElement>("[data-run-status]")!;
+    const runText = root.querySelector<HTMLElement>("[data-run-text]")!;
+    const srcs = [...root.querySelectorAll<HTMLElement>("[data-src]")];
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let current = 0;
+    let timers: number[] = [];
+    let visible = false;
+    let started = false;
+
+    const clear = () => {
+      timers.forEach(clearTimeout);
+      timers = [];
+    };
+    const at = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+    const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+
+    const setRun = (state: string, text: string) => {
+      runStatus.dataset.state = state;
+      runText.textContent = text;
+    };
+    const log = (t: string, kind: string, msg: string) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="faint">${t}</span> <span class="log-${kind}">${kind === "run" ? "…" : kind}</span> ${esc(msg)}`;
+      logEl.append(li);
+      logEl.scrollTop = logEl.scrollHeight;
+      logCount.textContent = `${logEl.children.length} events`;
+    };
+
+    const render = (s: Scenario, finished: boolean) => {
+      pattern.textContent = s.pattern;
+      summary.textContent = s.summary;
+      srcs.forEach((el, i) => el.toggleAttribute("data-active", s.sources.includes(i)));
+      stepsEl.innerHTML = s.steps
+        .map(
+          (st, i) => `<li class="step" data-state="${finished ? "ok" : "pending"}" data-i="${i}">
+            <span class="step-mark"><span class="dot"></span></span>
+            <span class="step-verb">${esc(st.verb)}</span>
+            <span class="step-detail">${esc(st.detail)}</span>
+            <span class="step-t mono">${st.t}</span>
+            <span class="step-note mono" ${finished && (st.retry || st.approval) ? `data-kind="ok"` : "hidden"}>${finished && st.retry ? "Recovered after retry" : finished && st.approval ? "Approved by a person" : ""}</span>
+          </li>`,
+        )
+        .join("");
+      outEl.innerHTML = s.outputs
+        .map((o) => `<li class="out${finished ? " is-on" : ""}"><span class="out-title">${esc(o.title)}</span><span class="out-detail">${esc(o.detail)}</span></li>`)
+        .join("");
+      logEl.innerHTML = "";
+      if (finished) s.steps.forEach((st) => log(st.t, "ok", st.verb.toLowerCase()));
+      else logCount.textContent = "0 events";
+      // Copy the step/output scoped-style attribute so Astro's scoped CSS keeps applying.
+      const scope = [...stepsEl.attributes].find((a) => a.name.startsWith("data-astro-cid"));
+      if (scope) panel.querySelectorAll(".step, .step *, .out, .out *").forEach((el) => el.setAttribute(scope.name, ""));
+    };
+
+    const play = (index: number) => {
+      clear();
+      const s = data.SCENARIOS[index];
+      if (reduce) {
+        render(s, true);
+        setRun("ok", "Run complete");
+        return;
+      }
+      render(s, false);
+      setRun("run", "Running…");
+      const items = [...stepsEl.querySelectorAll<HTMLElement>(".step")];
+      let tms = 350;
+      s.steps.forEach((st, i) => {
+        const el = items[i];
+        const note = el.querySelector<HTMLElement>(".step-note")!;
+        at(tms, () => {
+          el.dataset.state = "run";
+          log(st.t, "run", st.verb.toLowerCase());
+        });
+        tms += 650;
+        if (st.retry) {
+          at(tms, () => {
+            el.dataset.state = "fail";
+            note.hidden = false;
+            note.dataset.kind = "fail";
+            note.textContent = st.retry!;
+            log(st.t, "fail", st.retry!);
+            setRun("fail", "Retrying…");
+          });
+          tms += 1500;
+          at(tms, () => {
+            el.dataset.state = "run";
+            setRun("run", "Running…");
+          });
+          tms += 650;
+        }
+        if (st.approval) {
+          at(tms, () => {
+            el.dataset.state = "wait";
+            note.hidden = false;
+            note.dataset.kind = "wait";
+            note.textContent = st.approval!;
+            log(st.t, "wait", "awaiting approval");
+            setRun("wait", "Waiting for a person");
+          });
+          tms += 2200;
+        }
+        at(tms, () => {
+          el.dataset.state = "ok";
+          if (st.retry || st.approval) {
+            note.dataset.kind = "ok";
+            note.textContent = st.retry ? "Recovered after retry" : "Approved by a person";
+          }
+          log(st.t, "ok", st.verb.toLowerCase());
+          if (i === s.steps.length - 1) {
+            outEl.querySelectorAll(".out").forEach((o, k) => at(180 * k, () => o.classList.add("is-on")));
+            setRun("ok", "Run complete");
+          }
+        });
+        tms += 300;
+      });
+    };
+
+    const select = (i: number, focus = false) => {
+      current = i;
+      tabs.forEach((t, k) => {
+        const on = k === i;
+        t.setAttribute("aria-selected", String(on));
+        t.tabIndex = on ? 0 : -1;
+      });
+      panel.setAttribute("aria-labelledby", tabs[i].id);
+      if (focus) tabs[i].focus();
+      play(i);
+    };
+
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => select(i));
+      t.addEventListener("keydown", (e) => {
+        const k = e.key;
+        if (k === "ArrowRight" || k === "ArrowLeft" || k === "Home" || k === "End") {
+          e.preventDefault();
+          const n = tabs.length;
+          const next = k === "Home" ? 0 : k === "End" ? n - 1 : (current + (k === "ArrowRight" ? 1 : -1) + n) % n;
+          select(next, true);
+        }
+      });
+    });
+    root.querySelector("[data-replay]")!.addEventListener("click", () => play(current));
+
+    // Autoplay the first run once the console is on screen, never while hidden.
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(
+        ([e]) => {
+          visible = e.isIntersecting;
+          if (visible && !started) {
+            started = true;
+            play(current);
+          }
+        },
+        { threshold: 0.35 },
+      ).observe(root);
+    }
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && timers.length) {
+        clear();
+        render(data.SCENARIOS[current], true);
+        setRun("ok", "Run complete");
+      }
+    });
+  }
+</script>

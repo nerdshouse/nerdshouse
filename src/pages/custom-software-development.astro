@@ -1,0 +1,259 @@
+---
+import Base from "@layouts/Base.astro";
+import ServiceHero from "@components/ServiceHero.astro";
+import RoleMap from "@components/visuals/RoleMap.astro";
+import SpreadsheetToSystem from "@components/visuals/SpreadsheetToSystem.astro";
+import Fit from "@components/Fit.astro";
+import Faq from "@components/Faq.astro";
+import CtaBand from "@components/CtaBand.astro";
+import Icon from "@components/Icon.astro";
+import { SITE } from "@data/site";
+
+const title = "Custom Software & Business Systems Development | Nerdshouse";
+const description =
+  "Internal tools, dashboards, CRMs, inventory and booking systems built around how your business runs — with payments, WhatsApp, roles and audit history.";
+
+const service = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Custom Business Systems",
+  serviceType: "Custom software development",
+  description,
+  url: `${SITE.url}/custom-software-development`,
+  provider: { "@id": `${SITE.url}/#organization` },
+};
+
+const symptoms = [
+  { s: "“Which version of the sheet is right?”", b: "One database with a record per order, payment and customer — and history on every change." },
+  { s: "Leads go cold because nobody followed up", b: "A CRM with owners, due dates, overdue alerts and reassignment." },
+  { s: "Payments are matched by hand at month-end", b: "Payment-gateway webhooks recorded once and matched to the right booking automatically." },
+  { s: "Field staff report by phone call", b: "A mobile app for visits with photos, location and follow-ups." },
+  { s: "Stock-outs are discovered by customers", b: "Inventory with purchase orders and reorder planning by warehouse." },
+  { s: "The owner gets numbers once a week, by hand", b: "A live dashboard the owner can open any time — nobody rebuilds it." },
+];
+
+const included = [
+  "Role-based access for every type of user",
+  "Audit history on important records",
+  "Approval steps where money or stock changes",
+  "Integrations: payments, WhatsApp, store, email",
+  "Works on the phones your team already has",
+  "CSV export, so your data is never trapped",
+  "Release notes and a handover README",
+  "Hosting on managed services you own",
+];
+
+const faq = [
+  {
+    q: "Should we build or buy?",
+    a: "<p>Buy when a product fits 80% of how you work and the rest doesn't matter. Build when the way you work is the advantage, or when you are paying for five tools and glueing them together by hand. We'll recommend buying when that's the right answer — including tools that integrate with something we build.</p>",
+  },
+  {
+    q: "Can you work with our existing tools?",
+    a: "<p>Usually that's the point. We connect to your store, payment gateway, WhatsApp, spreadsheets and accounting where they have APIs, and we start by mapping what each one is responsible for.</p>",
+  },
+  {
+    q: "Do we have to replace everything at once?",
+    a: "<p>No. We normally start with the one workflow that hurts most, run it alongside the old way, then expand.</p>",
+  },
+  {
+    q: "What happens to our data?",
+    a: "<p>It lives in a database under your account, with backups provided by the hosting service, and you can export it. We document where everything is.</p>",
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={[service]} breadcrumbs={[{ name: "Custom Business Systems", path: "/custom-software-development" }]}>
+  <ServiceHero
+    index="03"
+    name="Custom Business Systems"
+    title="Software shaped around how your business <em>actually runs.</em>"
+    lede="Internal tools, dashboards and integrations that replace the spreadsheets, chats and copy-paste your operations depend on — so everyone works from the same record."
+    cta={{ label: "Explain your operations problem", href: "/contact?topic=problem" }}
+    secondary={{ label: "See our work", href: "/work" }}
+  >
+    <RoleMap />
+  </ServiceHero>
+
+  <section class="section s-light" aria-labelledby="sym-title">
+    <div class="wrap">
+      <header class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow">Symptoms we fix</p>
+          <h2 id="sym-title" class="h2" style="margin-top:18px">If this sounds familiar, we know what to build.</h2>
+        </div>
+        <p class="lede">Every row is a pattern we've built into a live client system.</p>
+      </header>
+      <div class="sym" role="table" aria-label="Symptoms and the systems that fix them">
+        <div class="sym-row sym-row--h" role="row">
+          <span role="columnheader" class="mono">What you're living with</span>
+          <span role="columnheader" class="mono">What we'd build</span>
+        </div>
+        {
+          symptoms.map((r) => (
+            <div class="sym-row" role="row">
+              <span role="cell" class="sym-s">
+                <span class="dot" data-state="fail" />
+                {r.s}
+              </span>
+              <span role="cell" class="sym-b">
+                <Icon name="arrow" class="sym-arrow" />
+                {r.b}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section s-white" aria-labelledby="ba-title">
+    <div class="wrap ba-grid">
+      <header>
+        <p class="eyebrow">Before and after</p>
+        <h2 id="ba-title" class="h2" style="margin-top:18px">From “check the sheet” to one screen.</h2>
+        <p class="lede" style="margin-top:20px">
+          On the left, the pattern we usually find when we start. On the right, the shape of what replaces it: one screen per job,
+          and the same record underneath every one of them.
+        </p>
+        <a href="/work" class="btn btn--ink" style="margin-top:28px">See our work <Icon name="arrow" /></a>
+      </header>
+      <SpreadsheetToSystem />
+    </div>
+  </section>
+
+  <section class="section s-dark-2" aria-labelledby="inc-title">
+    <div class="wrap inc-grid">
+      <header>
+        <p class="eyebrow">In every system</p>
+        <h2 id="inc-title" class="h2" style="margin-top:18px">The unglamorous parts, included.</h2>
+        <p class="lede" style="margin-top:20px">These are what make internal software trustworthy enough that people stop keeping a backup spreadsheet.</p>
+      </header>
+      <ul class="inc">
+        {
+          included.map((i) => (
+            <li>
+              <Icon name="check" class="inc-ico" />
+              {i}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Fit
+    good={[
+      "Your operations run on spreadsheets, WhatsApp groups and memory",
+      "Off-the-shelf tools almost fit, but the gaps cost you every day",
+      "You can name one workflow that hurts most",
+      "Someone on your side will use it early and tell us what's wrong",
+    ]}
+    bad={[
+      "A standard product already fits how you work — buy it",
+      "Nobody in the team will change how they work",
+      "You need it to replace every tool in one go",
+    ]}
+  />
+  <Faq items={faq} />
+  <CtaBand title="Which spreadsheet worries you most?" lede="Tell us how the work flows today — who does what, in which tool. We'll sketch what a system for it could look like." />
+</Base>
+
+<style>
+  .sym {
+    border-top: 1px solid var(--line);
+  }
+  .sym-row {
+    display: grid;
+    gap: 8px 32px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 860px) {
+    .sym-row {
+      grid-template-columns: 1fr 1.2fr;
+      align-items: baseline;
+    }
+  }
+  .sym-row--h {
+    display: none;
+  }
+  @media (min-width: 860px) {
+    .sym-row--h {
+      display: grid;
+      padding: 10px 0;
+    }
+  }
+  .sym-row--h span {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+  }
+  .sym-s {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
+    letter-spacing: -0.015em;
+  }
+  .sym-b {
+    display: flex;
+    gap: 12px;
+    color: var(--mute);
+  }
+  .sym-b :global(.sym-arrow) {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    margin-top: 4px;
+    color: var(--accent-text);
+  }
+  .ba-grid,
+  .inc-grid {
+    display: grid;
+    gap: 48px;
+  }
+  @media (min-width: 1100px) {
+    .ba-grid {
+      grid-template-columns: 0.75fr 1.25fr;
+      gap: 72px;
+      align-items: center;
+    }
+    .inc-grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 80px;
+    }
+  }
+  .ba-grid .btn {
+    display: inline-flex;
+  }
+  .inc {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--ink-line);
+  }
+  @media (min-width: 640px) {
+    .inc {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 32px;
+    }
+  }
+  .inc li {
+    display: flex;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--ink-line);
+  }
+  .inc :global(.inc-ico) {
+    width: 20px;
+    height: 20px;
+    color: var(--ok);
+    flex: none;
+    margin-top: 2px;
+  }
+</style>

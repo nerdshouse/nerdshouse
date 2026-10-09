@@ -1,0 +1,26 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/services",
+      "destination": "/#capabilities",
+      "permanent": true
+    },
+    {
+      "source": "/blog",
+      "destination": "/work",
+      "permanent": true
+    },
+    {
+      "source": "/blog/:path*",
+      "destination": "/work",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/sitemap-index.xml",
+      "permanent": true
+    }
+  ]
+}

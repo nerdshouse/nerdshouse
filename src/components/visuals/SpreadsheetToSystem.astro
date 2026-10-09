@@ -1,0 +1,228 @@
+---
+// Before: a shadow spreadsheet + chat. After: an illustrative operations screen built on one record.
+const rows = [
+  ["Booking", "Customer", "Paid?", "Partner"],
+  ["SV-118", "R. Shah", "yes??", "—"],
+  ["SV-118", "Rakesh S", "pending", "Imran"],
+  ["SV-121", "Mehul", "yes", "(ask Dev)"],
+  ["SV-124", "", "#REF!", "Imran"],
+];
+const apps = ["Bookings", "Payments", "Leads", "Inventory", "Tasks"];
+const after = [
+  { id: "SV-118", who: "R. Shah", paid: "Paid", state: "ok", partner: "Imran · Sat 10:00" },
+  { id: "SV-121", who: "Mehul P.", paid: "Paid", state: "ok", partner: "Assigning…" },
+  { id: "SV-124", who: "K. Desai", paid: "Pending", state: "wait", partner: "—" },
+];
+---
+
+<div class="s2s">
+  <div class="before" aria-label="Before: a shared spreadsheet and chat messages">
+    <p class="tag mono"><span class="dot" data-state="fail"></span>Before · the usual pattern</p>
+    <div class="sheet" role="img" aria-label="A spreadsheet with a duplicated booking, unclear payment status and a broken formula.">
+      {
+        rows.map((r, i) => (
+          <div class:list={["sr", i === 0 && "sr--h"]}>
+            {r.map((c, j) => (
+              <span class:list={["sc", (c.includes("?") || c.includes("#REF") || (i === 2 && j === 0) || c.includes("ask")) && "sc--bad"]}>{c}</span>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+    <div class="chats" aria-hidden="true">
+      <p class="bubble">Is SV-118 paid or not?</p>
+      <p class="bubble bubble--r">Check the sheet</p>
+      <p class="bubble">Sheet says both 😅</p>
+    </div>
+  </div>
+
+  <div class="after">
+    <p class="tag mono"><span class="dot" data-state="ok"></span>After · one record</p>
+    <div class="browser">
+      <div class="browser__bar">
+        <span class="browser__dots"><i></i><i></i><i></i></span>
+        <span class="browser__url">Operations · Bookings</span>
+      </div>
+      <div class="ops" role="img" aria-label="Illustrative operations screen: three bookings, each with one payment status and an assigned partner, and summary counts.">
+        <div class="ops-kpis">
+          <span><b>3</b> bookings today</span>
+          <span><b>2</b> paid</span>
+          <span class="warn"><b>1</b> needs follow-up</span>
+        </div>
+        <div class="ops-table">
+          <div class="ops-row ops-row--h"><span>Booking</span><span>Customer</span><span>Payment</span><span>Partner</span></div>
+          {
+            after.map((r) => (
+              <div class="ops-row">
+                <span class="mono">{r.id}</span>
+                <span>{r.who}</span>
+                <span class="ops-pay" data-state={r.state}>
+                  <span class="dot" />
+                  {r.paid}
+                </span>
+                <span>{r.partner}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+    <ul class="apps" aria-label="Modules sharing the same record">
+      {apps.map((a) => <li class="chip"><span class="dot" data-state="ok"></span>{a}</li>)}
+    </ul>
+    <p class="cap"><span class="label-illustrative">Illustrative</span> The shape of the systems we build. Client screens are shared with permission.</p>
+  </div>
+</div>
+
+<style>
+  .s2s {
+    display: grid;
+    gap: 14px;
+  }
+  @media (min-width: 720px) {
+    .s2s {
+      grid-template-columns: 0.8fr 1.2fr;
+      align-items: start;
+    }
+  }
+  .tag {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--mute);
+    margin-bottom: 10px;
+  }
+  .before {
+    padding: 16px;
+    border-radius: var(--radius);
+    border: 1px dashed var(--line);
+    background: var(--panel-2);
+  }
+  .sheet {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    border: 1px solid var(--line);
+    background: var(--white);
+    color: var(--light-text);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .sr {
+    display: grid;
+    grid-template-columns: 0.8fr 1fr 0.8fr 1fr;
+  }
+  .sr + .sr {
+    border-top: 1px solid var(--light-line-soft);
+  }
+  .sr--h {
+    background: var(--light-0);
+    font-weight: 600;
+  }
+  .sc {
+    padding: 6px 7px;
+    border-right: 1px solid var(--light-line-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 27px;
+  }
+  .sc--bad {
+    background: #ffe9ec;
+    color: var(--fail-ink);
+  }
+  .chats {
+    display: grid;
+    gap: 6px;
+    margin-top: 14px;
+    font-size: 0.82rem;
+  }
+  .bubble {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 7px 11px;
+    border-radius: 12px 12px 12px 3px;
+    width: fit-content;
+    max-width: 85%;
+    color: var(--light-text);
+  }
+  .bubble--r {
+    justify-self: end;
+    border-radius: 12px 12px 3px 12px;
+    background: #e2f6ea;
+  }
+  .ops {
+    padding: 14px;
+    display: grid;
+    gap: 12px;
+    background: var(--white);
+    color: var(--light-text);
+    font-size: 0.8rem;
+  }
+  .ops-kpis {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ops-kpis span {
+    padding: 8px 10px;
+    border: 1px solid var(--light-line);
+    border-radius: 8px;
+    color: var(--light-mute);
+  }
+  .ops-kpis b {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--light-text);
+    margin-right: 4px;
+  }
+  .ops-kpis .warn {
+    border-color: rgba(255, 194, 61, 0.7);
+    background: #fff8e6;
+  }
+  .ops-table {
+    border: 1px solid var(--light-line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .ops-row {
+    display: grid;
+    grid-template-columns: 0.8fr 1fr 0.9fr 1.3fr;
+    gap: 8px;
+    padding: 8px 10px;
+    border-top: 1px solid var(--light-line-soft);
+    align-items: center;
+  }
+  .ops-row--h {
+    border-top: 0;
+    background: var(--light-1);
+    font-weight: 600;
+  }
+  .ops-pay {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .ops-pay[data-state="ok"] {
+    color: var(--ok-ink);
+  }
+  .ops-pay[data-state="wait"] {
+    color: var(--wait-ink);
+  }
+  .apps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .cap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    font-size: 0.8rem;
+    margin-top: 10px;
+    color: var(--mute);
+  }
+</style>

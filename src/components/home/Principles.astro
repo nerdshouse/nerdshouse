@@ -1,0 +1,109 @@
+---
+// Principles, each with the evidence behind it. Keep this list honest: remove a line
+// rather than keep a principle that can't be shown.
+const items = [
+  {
+    t: "Built around the tools you already use",
+    d: "We connect to your store, payment gateway and WhatsApp rather than asking your team to move to something new.",
+    ev: "Live client systems integrate PhonePe, WhatsApp Business messaging, GoKwik and Shopify.",
+  },
+  {
+    t: "Roles and permissions from day one",
+    d: "Owners, managers, sales and partners each get the screens and actions their role needs — planned in from the first release, not bolted on later.",
+    ev: "Briyo's operations tools set permissions per module, and only allow-listed numbers can sign in.",
+  },
+  {
+    t: "Written down, not in someone's head",
+    d: "Release notes, setup guides and decision records travel with the code, so your system never depends on one person.",
+    ev: "Client repositories carry versioned changelogs and handover READMEs.",
+  },
+  {
+    t: "We stay after launch",
+    d: "Most systems we build keep growing. We plan for the second and third release, not just the first.",
+    ev: "Briyo's checkout-recovery board grew into operations modules for orders, inventory and affiliates.",
+  },
+  {
+    t: "Honest about AI",
+    d: "If a rule, a form or a good spreadsheet is the better answer, we'll say so — and build that instead.",
+    ev: "Our AI work includes human approval and logging by default, never fully unattended money or stock changes.",
+  },
+  {
+    t: "You talk to the people building it",
+    d: "A small team. The engineers on your project are the ones on your calls.",
+    ev: "Nerdshouse Technologies LLP, Surat — building since July 2020.",
+  },
+];
+---
+
+<section class="pr s-dark-2 section" aria-labelledby="pr-title">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">Why Nerdshouse</p>
+      <h2 id="pr-title" class="h2">Principles, with receipts.</h2>
+    </header>
+    <ul class="pr-grid">
+      {
+        items.map((it, i) => (
+          <li class="pr-item" data-reveal>
+            <span class="pr-n mono">{String(i + 1).padStart(2, "0")}</span>
+            <h3 class="h4">{it.t}</h3>
+            <p class="muted">{it.d}</p>
+            <p class="pr-ev mono">
+              <span>Evidence</span>
+              {it.ev}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .pr-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--ink-line);
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+  }
+  @media (min-width: 720px) {
+    .pr-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 1100px) {
+    .pr-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .pr-item {
+    background: var(--ink-1);
+    padding: clamp(22px, 2.6vw, 34px);
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 12px;
+  }
+  .pr-item .h4 {
+    font-size: 1.3rem;
+  }
+  .pr-n {
+    color: var(--signal);
+  }
+  .pr-ev {
+    margin-top: 8px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--ink-line);
+    color: var(--ink-mute);
+    font-size: 0.74rem;
+    display: grid;
+    gap: 4px;
+  }
+  .pr-ev span {
+    color: var(--ok);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.64rem;
+  }
+</style>

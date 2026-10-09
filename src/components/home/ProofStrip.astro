@@ -1,0 +1,111 @@
+---
+// Text-based proof only. Every line is traceable to a repository, the MCA record or the previous site.
+const facts = [
+  { k: "Since July 2020", v: "Nerdshouse Technologies LLP, building from Surat" },
+  { k: "Bookings + payments", v: "Online booking, payments and WhatsApp verification, live for Goosebumps Arena" },
+  { k: "Storefront + operations", v: "Shopify storefront and internal tooling for Briyo Supplements" },
+  { k: "Real integrations", v: "Payment gateways, WhatsApp messaging, checkout webhooks and maps in live client systems" },
+];
+const clients = ["Briyo Supplements", "WorkSpaceCo", "Goosebumps Arena", "Vishesh Masala", "Kohinoor Jewellers", "Panaka Craft Beers", "Sarvati", "Phaelora"];
+const stack = ["TypeScript", "Next.js", "React", "Node.js", "Postgres · Supabase", "Firebase", "Shopify", "PhonePe", "WhatsApp Business API", "Vercel"];
+---
+
+<section class="proof s-dark" aria-label="Evidence">
+  <div class="wrap">
+    <ul class="facts">
+      {
+        facts.map((f) => (
+          <li class="fact">
+            <span class="fact-k">{f.k}</span>
+            <span class="fact-v">{f.v}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="rows">
+      <p class="row">
+        <span class="row-h mono">Clients include</span>
+        <span class="row-items">{clients.map((c) => <span>{c}</span>)}</span>
+      </p>
+      <p class="row">
+        <span class="row-h mono">Stack in client systems</span>
+        <span class="row-items row-items--mono">{stack.map((c) => <span>{c}</span>)}</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .proof {
+    border-top: 1px solid var(--ink-line-soft);
+    padding-block: clamp(40px, 5vw, 64px);
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-top: 1px solid var(--ink-line);
+  }
+  @media (min-width: 640px) {
+    .facts {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 1100px) {
+    .facts {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .fact {
+    display: grid;
+    gap: 6px;
+    padding: 22px 24px 22px 0;
+    border-bottom: 1px solid var(--ink-line-soft);
+  }
+  .fact-k {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.75rem);
+    font-weight: 680;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .fact-v {
+    color: var(--ink-mute);
+    font-size: 0.92rem;
+    line-height: 1.45;
+    max-width: 32ch;
+  }
+  .rows {
+    display: grid;
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .row {
+    display: grid;
+    gap: 8px;
+  }
+  @media (min-width: 900px) {
+    .row {
+      grid-template-columns: 220px 1fr;
+      gap: 24px;
+      align-items: baseline;
+    }
+  }
+  .row-h {
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+  }
+  .row-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    color: var(--ink-mute);
+    font-size: 0.98rem;
+  }
+  .row-items--mono {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    gap: 6px 18px;
+  }
+</style>

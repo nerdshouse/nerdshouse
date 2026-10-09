@@ -1,0 +1,125 @@
+---
+// Technology partnership: the monthly record of what shipped, what was decided and why.
+const cols = [
+  {
+    h: "Shipped",
+    state: "ok",
+    items: [
+      { t: "Manager approvals for discounts", m: "Release 2.4 · in production" },
+      { t: "Nightly stock reconciliation job", m: "Release 2.3 · alerts on mismatch" },
+    ],
+  },
+  {
+    h: "Decided",
+    state: "run",
+    items: [
+      { t: "Keep Postgres. Add a read replica only if reports slow checkout.", m: "Decision record #014" },
+      { t: "Buy, don't build, the invoicing module.", m: "Decision record #015" },
+    ],
+  },
+  {
+    h: "Watching",
+    state: "wait",
+    items: [
+      { t: "Messaging API template approvals take 2–3 days", m: "Risk · owner: Nerdshouse" },
+      { t: "Two admins share one login", m: "Risk · fix scheduled in 2.5" },
+    ],
+  },
+];
+---
+
+<div class="dl" role="group" aria-label="Example monthly partnership review">
+  <div class="dl-head">
+    <p class="h4">Monthly review</p>
+    <span class="label-illustrative">Illustrative</span>
+  </div>
+  <div class="dl-cols">
+    {
+      cols.map((c) => (
+        <section class="dl-col" aria-label={c.h}>
+          <p class="dl-h mono" data-state={c.state}>
+            <span class="dot" />
+            {c.h}
+          </p>
+          <ul>
+            {c.items.map((it) => (
+              <li class="dl-item">
+                <span>{it.t}</span>
+                <span class="mono faint">{it.m}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+  <div class="dl-next">
+    <p class="mono dl-h"><span class="dot" data-state="ok"></span>Next month</p>
+    <p>Move field-sales sync to background jobs before the sales team doubles.</p>
+  </div>
+</div>
+
+<style>
+  .dl {
+    border-radius: var(--radius-l);
+    border: 1px solid var(--line);
+    background: var(--panel);
+    padding: clamp(16px, 2.2vw, 24px);
+    display: grid;
+    gap: 16px;
+  }
+  .dl-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .dl-cols {
+    display: grid;
+    gap: 12px;
+  }
+  @media (min-width: 640px) {
+    .dl-cols {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .dl-h {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-size: 0.68rem;
+    color: var(--mute);
+    margin-bottom: 8px;
+  }
+  .dl-col ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .dl-item {
+    display: grid;
+    gap: 6px;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--line-soft);
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+  .dl-item .mono {
+    font-size: 0.68rem;
+  }
+  .dl-next {
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    font-size: 0.92rem;
+  }
+  .dl-next .dl-h {
+    margin-bottom: 4px;
+  }
+</style>

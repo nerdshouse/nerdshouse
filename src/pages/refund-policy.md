@@ -1,5 +1,5 @@
 ---
-layout: ../layouts/ConstantData.astro
+layout: ../layouts/Legal.astro
 title: "Refund Policy"
 author: "Axit Mehta"
 date: "21 Feb 2024"

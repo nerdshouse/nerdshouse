@@ -1,5 +1,5 @@
 ---
-layout: ../layouts/ConstantData.astro
+layout: ../layouts/Legal.astro
 title: "Privacy Policy"
 author: "Axit Mehta"
 date: "21 Feb 2024"
@@ -7,8 +7,6 @@ date: "21 Feb 2024"
 
 
 
-
-# Privacy Policy
 
 
 Last updated: February 21, 2024

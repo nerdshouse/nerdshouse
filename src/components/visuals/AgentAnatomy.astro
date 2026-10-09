@@ -1,0 +1,129 @@
+---
+// A readable anatomy of a production agent. Large labels, real states, wraps on mobile.
+const lanes = [
+  { k: "Trigger", v: "Email, WhatsApp, form, schedule or webhook", state: "run" },
+  { k: "Context", v: "Retrieves only the records and documents this task needs", state: "run" },
+  { k: "Reasoning", v: "A model proposes a plan and the next tool call", state: "run" },
+  { k: "Tools", v: "Each one scoped: read, write, or never", state: "ok" },
+  { k: "Guardrails", v: "Limits, validation and policy checks on every call", state: "ok" },
+  { k: "Approval", v: "Risky actions pause for a person", state: "wait" },
+  { k: "Action", v: "Changes made through your systems' own APIs", state: "ok" },
+  { k: "Trace", v: "Inputs, tool calls, decisions and cost recorded", state: "ok" },
+];
+---
+
+<figure class="anat">
+  <div class="anat-head">
+    <p class="mono anat-h">Anatomy of a production agent</p>
+    <span class="label-illustrative">Reference design</span>
+  </div>
+  <ol class="anat-list">
+    {
+      lanes.map((l, i) => (
+        <li class="anat-item" data-state={l.state}>
+          <span class="anat-n mono">{String(i + 1).padStart(2, "0")}</span>
+          <span class="anat-k">
+            <span class="dot" />
+            {l.k}
+          </span>
+          <span class="anat-v">{l.v}</span>
+        </li>
+      ))
+    }
+  </ol>
+  <div class="anat-fail">
+    <p class="mono"><span class="dot" data-state="fail"></span> When something fails</p>
+    <p>Tool error, low confidence or a broken rule → the run stops safely, the work goes to a person with the full trace, and nothing is half-done.</p>
+  </div>
+</figure>
+
+<style>
+  .anat {
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-l);
+    background: var(--ink-1);
+    padding: clamp(16px, 2.5vw, 28px);
+  }
+  .anat-head {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .anat-h {
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+  }
+  .anat-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  @media (min-width: 640px) {
+    .anat-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1100px) {
+    .anat-list {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .anat-item {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid var(--ink-line);
+    background: var(--ink-0);
+    min-height: 120px;
+    align-content: start;
+  }
+  .anat-item[data-state="wait"] {
+    border-color: rgba(255, 194, 61, 0.45);
+    background: rgba(255, 194, 61, 0.05);
+  }
+  .anat-n {
+    color: var(--ink-faint);
+    font-size: 0.68rem;
+  }
+  .anat-k {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-size: 1.12rem;
+    letter-spacing: -0.015em;
+  }
+  .anat-v {
+    color: var(--ink-mute);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .anat-fail {
+    margin-top: 12px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px dashed rgba(255, 92, 122, 0.45);
+    display: grid;
+    gap: 4px;
+    font-size: 0.92rem;
+    color: var(--ink-mute);
+  }
+  .anat-fail .mono {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--fail);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+</style>

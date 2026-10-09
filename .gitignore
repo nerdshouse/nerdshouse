@@ -19,3 +19,9 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# local tooling
+.claude/
+
+# Local-only material: unpublished client work, internal launch docs. Never commit (public repo).
+private/

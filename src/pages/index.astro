@@ -1,30 +1,36 @@
 ---
-import Container from "@components/container.astro";
-import Cta from "@components/cta.astro";
-import Features from "@components/features.astro";
-import Footer from "@components/footer.astro";
-import Hero from "@components/hero.astro";
-import Logos from "@components/logos.astro";
-import Layout from "@layouts/Layout.astro";
+import Base from "@layouts/Base.astro";
+import Hero from "@components/home/Hero.astro";
+import ProofStrip from "@components/home/ProofStrip.astro";
+import Capabilities from "@components/home/Capabilities.astro";
+import EngineeringExplainer from "@components/home/EngineeringExplainer.astro";
+import SelectedWork from "@components/home/SelectedWork.astro";
+import Process from "@components/home/Process.astro";
+import Principles from "@components/home/Principles.astro";
+import CtaBand from "@components/CtaBand.astro";
+import { SITE } from "@data/site";
+
+const website = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE.url}/#website`,
+  name: SITE.name,
+  url: SITE.url,
+  publisher: { "@id": `${SITE.url}/#organization` },
+};
 ---
 
-<body>
-
-  <script
-    src="https://app.wonderchat.io/scripts/wonderchat.js"
-    data-name="wonderchat"
-    data-address="app.wonderchat.io"
-    data-id="clkthpuem008ljo20hi12in4k"
-    defer
-></script>
-
-</body>
-
-<Layout title="Building Websites that Work | Nerdshouse Technologies">
-  <Container>
-    <Hero />
-    <Features />
-    <Logos />
-    <Cta />
-  </Container>
-</Layout>
+<Base
+  title="Nerdshouse — Technology & AI Engineering Partner in Surat, India"
+  description={SITE.defaultDescription}
+  jsonLd={[website]}
+>
+  <Hero />
+  <ProofStrip />
+  <Capabilities />
+  <EngineeringExplainer />
+  <SelectedWork />
+  <Process />
+  <Principles />
+  <CtaBand />
+</Base>

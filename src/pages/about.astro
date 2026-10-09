@@ -1,60 +1,319 @@
 ---
-import { getCollection } from "astro:content";
-import { Picture } from "@astrojs/image/components";
-import Layout from "@layouts/Layout.astro";
-import Container from "@components/container.astro";
-import Sectionhead from "@components/sectionhead.astro";
+import Base from "@layouts/Base.astro";
+import CtaBand from "@components/CtaBand.astro";
+import Wordmark from "@components/Wordmark.astro";
+import Icon from "@components/Icon.astro";
+import { SITE } from "@data/site";
 
-// Filter team entries with 'draft: false' & date before current date
-const publishedTeamMembers = await getCollection("team", ({ data }) => {
-  return !data.draft && data.publishDate < new Date();
-});
+// Names as listed on the previous nerdshouse.com/about page. Roles and bios: founder to confirm.
+const people = ["Axit Mehta", "Dhaval Prajapati", "Meet Goplani", "Muskan Baid"];
+const initials = (n: string) => n.split(" ").map((w) => w[0]).join("");
+
+const timeline = [
+  { y: "2020", t: "Nerdshouse Technologies LLP is incorporated in Surat (July)." },
+  { y: "Early work", t: "Brand identities, websites and storefronts — WorkSpaceCo, Sarvati, 1602 Interiors, AXY, Sentiment and more." },
+  { y: "Commerce", t: "Shopify storefronts and the operations software behind them for D2C brands, including Briyo Supplements and Vishesh Masala." },
+  { y: "2025–26", t: "Business systems: booking, payments and operations software — including the platform behind Goosebumps Arena." },
+  { y: "Now", t: "Technology and AI engineering partner — AI workflows built on the same integrations, permissions and audit trails." },
+];
+
+const aboutLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "About Nerdshouse",
+  url: `${SITE.url}/about`,
+  mainEntity: { "@id": `${SITE.url}/#organization` },
+};
 ---
 
-<Layout title="About | Nerdshouse Technologies">
-  <Container>
-    <Sectionhead>
-      <Fragment slot="title">About</Fragment>
-      <Fragment slot="desc">We are a small team of Nerds.</Fragment>
-    </Sectionhead>
+<Base
+  title="About Nerdshouse — A Small Engineering Team in Surat, Since 2020"
+  description="Nerdshouse Technologies LLP is a technology and AI engineering partner founded in July 2020 in Surat, Gujarat. How we started, how we work and who you'll work with."
+  jsonLd={[aboutLd]}
+  breadcrumbs={[{ name: "About", path: "/about" }]}
+>
+  <section class="ah s-dark" aria-labelledby="ah-title">
+    <div class="wrap ah-grid">
+      <div>
+        <p class="eyebrow">About</p>
+        <h1 id="ah-title" class="display-l ah-title">Small team.<br />Senior hands.<br /><span class="faint">Surat.</span></h1>
+      </div>
+      <div class="ah-copy">
+        <p class="lede">
+          We're an engineering team that builds software businesses depend on: AI workflows, new products and the internal systems
+          behind them. We stay close to the work — the people on your calls are the people writing the code.
+        </p>
+        <div class="ah-mark" aria-hidden="true">
+          <Wordmark size="m" live state="ok" />
+          <p class="mono faint">The dot is a status light. Every system we build should tell you what state it's in.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <div class="flex flex-col gap-3 mx-auto max-w-4xl mt-16">
-      <h2 class="font-bold text-3xl text-gray-800">
-        Empowering the world with Technology.
-      </h2>
-      <p class="text-lg leading-relaxed text-slate-500">
-        We are a team of tech-loving nerds! We are here to help you with anything related to technology, and branding.
+  <section class="s-dark facts-band" aria-label="Company facts">
+    <div class="wrap">
+      <dl class="facts">
+        <div><dt class="mono">Legal name</dt><dd>{SITE.legalName}</dd></div>
+        <div><dt class="mono">Founded</dt><dd>25 July 2020</dd></div>
+        <div><dt class="mono">LLPIN</dt><dd>AAT-0623</dd></div>
+        <div><dt class="mono">Based in</dt><dd>{SITE.locality}, {SITE.region}, India</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section s-light" aria-labelledby="story-title">
+    <div class="wrap story">
+      <header>
+        <p class="eyebrow">How we got here</p>
+        <h2 id="story-title" class="h2" style="margin-top:18px">From websites to the systems behind them.</h2>
+      </header>
+      <ol class="tl">
+        {
+          timeline.map((t) => (
+            <li>
+              <span class="tl-y mono">{t.y}</span>
+              <p>{t.t}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section s-white" aria-labelledby="ppl-title">
+    <div class="wrap">
+      <header class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow">People</p>
+          <h2 id="ppl-title" class="h2" style="margin-top:18px">Who you'll work with.</h2>
+        </div>
+        <p class="lede">A deliberately small team. You'll know everyone working on your project by name.</p>
+      </header>
+      <ul class="ppl">
+        {
+          people.map((n) => (
+            <li class="person">
+              <span class="avatar" aria-hidden="true">{initials(n)}</span>
+              <span class="h4">{n}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="ppl-note muted">
+        Want to talk to the founder directly? <a href={`mailto:${SITE.founderEmail}`}>{SITE.founderEmail}</a>
       </p>
     </div>
-    <div class="grid md:grid-cols-3 gap-10 mx-auto max-w-4xl mt-12">
-      {
-        publishedTeamMembers.map((teamMemberEntry) => (
-          <div class="group">
-            <div class="w-full aspect-square">
-              <Picture
-                src={teamMemberEntry.data.avatar.src}
-                alt={teamMemberEntry.data.avatar.alt}
-                sizes="(max-width: 800px) 100vw, 400px"
-                widths={[200, 400]}
-                aspectRatio="1:1"
-                background="#ffffff"
-                fit="cover"
-                position="center"
-                class="w-full rounded-md rounded transition group-hover:-translate-y-1 group-hover:shadow-xl"
-              />
-            </div>
+  </section>
 
-            <div class="mt-4 text-center">
-              <h2 class="text-lg text-gray-800">
-                {teamMemberEntry.data.name}
-              </h2>
-              <h3 class="text-sm text-slate-500">
-                {teamMemberEntry.data.title}
-              </h3>
-            </div>
-          </div>
-        ))
-      }
+  <section class="section s-dark-2" aria-labelledby="how-title">
+    <div class="wrap how">
+      <header>
+        <p class="eyebrow">How we work</p>
+        <h2 id="how-title" class="h2" style="margin-top:18px">What you can expect from us.</h2>
+      </header>
+      <ul class="how-list">
+        <li><span class="mono accent">01</span><div><h3 class="h4">We'll say when you don't need us.</h3><p class="muted">If an existing product, a spreadsheet or a simple rule solves it, that's our advice.</p></div></li>
+        <li><span class="mono accent">02</span><div><h3 class="h4">You'll always be able to see progress.</h3><p class="muted">Every stage ends with something to read, click or use — not a status update.</p></div></li>
+        <li><span class="mono accent">03</span><div><h3 class="h4">You own everything.</h3><p class="muted">Code, accounts, data and documentation are yours from day one.</p></div></li>
+        <li><span class="mono accent">04</span><div><h3 class="h4">We write things down.</h3><p class="muted">Release notes, decisions and setup guides, so nothing depends on one person's memory.</p></div></li>
+      </ul>
+      <a href="/#capabilities" class="link-arrow">What we build <Icon name="arrow" /></a>
     </div>
-  </Container>
-</Layout>
+  </section>
+
+  <CtaBand title="Let's talk about your project." />
+</Base>
+
+<style>
+  .ah {
+    padding-block: clamp(56px, 8vw, 120px) clamp(40px, 5vw, 72px);
+  }
+  .ah-grid {
+    display: grid;
+    gap: 40px;
+  }
+  @media (min-width: 1000px) {
+    .ah-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 72px;
+      align-items: end;
+    }
+  }
+  .ah-title {
+    margin-top: 24px;
+  }
+  .ah-copy {
+    display: grid;
+    gap: 32px;
+  }
+  .ah-mark {
+    display: grid;
+    gap: 10px;
+    padding: 20px;
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-l);
+    background: var(--ink-1);
+  }
+  .ah-mark .mono {
+    font-size: 0.74rem;
+  }
+  .facts-band {
+    padding-bottom: clamp(48px, 6vw, 80px);
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--ink-line);
+  }
+  @media (min-width: 900px) {
+    .facts {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .facts div {
+    padding: 18px 16px 18px 0;
+    border-bottom: 1px solid var(--ink-line);
+  }
+  .facts dt {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  .facts dd {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .story {
+    display: grid;
+    gap: 40px;
+  }
+  @media (min-width: 1000px) {
+    .story {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 80px;
+    }
+  }
+  .tl {
+    list-style: none;
+    padding: 0;
+    border-left: 2px solid var(--line);
+    display: grid;
+    gap: 28px;
+  }
+  .tl li {
+    position: relative;
+    padding-left: 28px;
+    display: grid;
+    gap: 4px;
+  }
+  .tl li::before {
+    content: "";
+    position: absolute;
+    left: -7px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--signal-ink);
+  }
+  .tl li:last-child::before {
+    background: var(--signal);
+    border-color: var(--signal);
+  }
+  .tl-y {
+    color: var(--accent-text);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .tl p {
+    font-size: 1.08rem;
+  }
+  .ppl {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: 900px) {
+    .ppl {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .person {
+    display: grid;
+    gap: 16px;
+    padding: 20px;
+    border-radius: var(--radius-l);
+    border: 1px solid var(--line);
+    background: var(--light-1);
+  }
+  .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--ink-0);
+    color: var(--ink-text);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: -0.03em;
+    position: relative;
+  }
+  .avatar::after {
+    content: "";
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--ok);
+    border: 3px solid var(--light-1);
+  }
+  .ppl-note {
+    margin-top: 24px;
+  }
+  .ppl-note a {
+    color: var(--signal-ink);
+  }
+  .how {
+    display: grid;
+    gap: 40px;
+  }
+  .how-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--ink-line);
+  }
+  @media (min-width: 900px) {
+    .how-list {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 48px;
+    }
+  }
+  .how-list li {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 8px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--ink-line);
+  }
+  .how-list .h4 {
+    margin-bottom: 6px;
+  }
+  .how .link-arrow {
+    justify-self: start;
+  }
+</style>

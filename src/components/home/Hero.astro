@@ -1,0 +1,96 @@
+---
+import HeroConsole from "./HeroConsole.astro";
+import Icon from "../Icon.astro";
+---
+
+<section class="hero s-dark" aria-labelledby="hero-title">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Technology &amp; AI engineering partner · Surat, India</p>
+    <h1 id="hero-title" class="display-xl hero-title">
+      Hard problems in.<br />
+      <span class="hero-out">Working systems out.</span>
+    </h1>
+    <div class="hero-foot">
+      <p class="lede hero-lede">
+        We design and build AI workflows, new products and custom business software — connected to the tools you already
+        use, and looked after once they are live.
+      </p>
+      <div class="btn-row">
+        <a href="/contact?topic=problem" class="btn btn--primary">Explain your problem <Icon name="arrow" /></a>
+        <a href="/work" class="btn btn--ghost">See systems in production</a>
+      </div>
+    </div>
+
+    <figure class="hero-demo">
+      <HeroConsole />
+      <figcaption class="hero-cap">
+        <span class="label-illustrative">Illustrative runs</span>
+        <span>
+          Modelled on systems we have built for clients. Choose a run to watch every step — including the retries and the
+          moments a person has to approve.
+        </span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-top: clamp(48px, 7vw, 104px);
+    padding-bottom: clamp(56px, 7vw, 104px);
+    overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(90% 60% at 50% 0%, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(90% 60% at 50% 0%, #000 30%, transparent 75%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+  }
+  .hero-title {
+    margin-top: 28px;
+  }
+  .hero-out {
+    color: var(--ink-faint);
+    background: linear-gradient(90deg, var(--ink-text) 0%, var(--ink-text) 40%, var(--signal) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-foot {
+    display: grid;
+    gap: 28px;
+    margin-top: clamp(28px, 3.5vw, 44px);
+    align-items: end;
+  }
+  @media (min-width: 960px) {
+    .hero-foot {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 48px;
+    }
+  }
+  .hero-lede {
+    color: var(--ink-mute);
+  }
+  .hero-demo {
+    margin-top: clamp(48px, 6vw, 80px);
+  }
+  .hero-cap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    align-items: baseline;
+    margin-top: 14px;
+    color: var(--ink-faint);
+    font-size: 0.88rem;
+  }
+</style>

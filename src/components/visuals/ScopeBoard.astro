@@ -1,0 +1,215 @@
+---
+// Interactive scoping exercise. Each idea cycles between "v1", "Next" and "Not now".
+// The summary explains what the v1 would prove and warns when v1 is too big.
+// No time or price estimates — those depend on the real project.
+const ideas = [
+  { t: "Customer signs up with phone OTP", col: "v1", core: true },
+  { t: "Book a slot and pay online", col: "v1", core: true },
+  { t: "Admin sees and manages bookings", col: "v1", core: true },
+  { t: "WhatsApp confirmation", col: "v1", core: false },
+  { t: "Loyalty points", col: "later", core: false },
+  { t: "Referral codes", col: "later", core: false },
+  { t: "Native iOS & Android apps", col: "no", core: false },
+  { t: "AI chat assistant", col: "no", core: false },
+  { t: "Multi-city support", col: "later", core: false },
+];
+const cols = [
+  { id: "v1", h: "In v1", d: "What the first release must do" },
+  { id: "later", h: "Next", d: "Worth doing once v1 is used" },
+  { id: "no", h: "Not now", d: "Parked, with a reason" },
+];
+---
+
+<div class="sb" data-sb>
+  <div class="sb-head">
+    <div>
+      <p class="mono sb-h">Scoping board · example product: online bookings</p>
+      <p class="sb-hint muted">Select a card to move it between columns.</p>
+    </div>
+    <span class="label-illustrative">Interactive example</span>
+  </div>
+  <div class="sb-cols">
+    {
+      cols.map((c) => (
+        <section class="sb-col" data-col={c.id} aria-labelledby={`sb-${c.id}`}>
+          <p id={`sb-${c.id}`} class="sb-col-h">
+            {c.h} <span class="mono faint" data-count={c.id} />
+          </p>
+          <p class="sb-col-d mono">{c.d}</p>
+          <ul class="sb-list" data-list={c.id}>
+            {ideas
+              .filter((i) => i.col === c.id)
+              .map((i) => (
+                <li>
+                  <button type="button" class="sb-card" data-core={i.core ? "" : undefined} aria-label={`${i.t}. Currently in ${c.h}. Select to move.`}>
+                    {i.t}
+                    {i.core && <span class="sb-core mono">core</span>}
+                  </button>
+                </li>
+              ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+  <div class="sb-sum" role="status" aria-live="polite" data-sum>
+    <p class="mono sb-sum-h"><span class="dot" data-state="ok" data-sum-dot></span> <span data-sum-title>A focused v1</span></p>
+    <p data-sum-text>v1 proves one thing: customers will book and pay online, and your team can run bookings from one screen.</p>
+  </div>
+</div>
+
+<style>
+  .sb {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--panel);
+    padding: clamp(16px, 2.5vw, 28px);
+    color: var(--text);
+  }
+  .sb-head {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-bottom: 18px;
+  }
+  .sb-h {
+    color: var(--faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+  }
+  .sb-hint {
+    font-size: 0.9rem;
+    margin-top: 4px;
+  }
+  .sb-cols {
+    display: grid;
+    gap: 12px;
+  }
+  @media (min-width: 760px) {
+    .sb-cols {
+      grid-template-columns: 1.15fr 1fr 1fr;
+    }
+  }
+  .sb-col {
+    border-radius: 12px;
+    padding: 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--line-soft);
+  }
+  .sb-col[data-col="v1"] {
+    border-color: rgba(255, 106, 43, 0.45);
+  }
+  .sb-col-h {
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-size: 1.1rem;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .sb-col-d {
+    color: var(--faint);
+    font-size: 0.7rem;
+    margin: 2px 0 12px;
+  }
+  .sb-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    min-height: 60px;
+  }
+  .sb-card {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--text);
+    text-align: left;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+  }
+  .sb-card:hover {
+    border-color: var(--text);
+  }
+  .sb-core {
+    font-size: 0.62rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--signal);
+    color: var(--ink-0);
+    text-transform: uppercase;
+    flex: none;
+  }
+  .sb-sum {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    display: grid;
+    gap: 4px;
+  }
+  .sb-sum-h {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-sb]");
+  if (root) {
+    const order = ["v1", "later", "no"];
+    const names: Record<string, string> = { v1: "In v1", later: "Next", no: "Not now" };
+    const lists = Object.fromEntries(order.map((id) => [id, root.querySelector<HTMLUListElement>(`[data-list="${id}"]`)!]));
+    const title = root.querySelector<HTMLElement>("[data-sum-title]")!;
+    const text = root.querySelector<HTMLElement>("[data-sum-text]")!;
+    const dot = root.querySelector<HTMLElement>("[data-sum-dot]")!;
+
+    const refresh = () => {
+      order.forEach((id) => (root.querySelector(`[data-count="${id}"]`)!.textContent = String(lists[id].children.length)));
+      const v1 = [...lists.v1.querySelectorAll<HTMLButtonElement>(".sb-card")];
+      const coreMissing = root.querySelectorAll(`[data-list]:not([data-list="v1"]) [data-core]`).length;
+      const n = v1.length;
+      if (coreMissing) {
+        dot.dataset.state = "fail";
+        title.textContent = "v1 can't prove the idea yet";
+        text.textContent = "A core step has been moved out. Without it, customers can't complete the main job — so v1 won't tell you anything.";
+      } else if (n > 6) {
+        dot.dataset.state = "wait";
+        title.textContent = `v1 is getting big (${n} items)`;
+        text.textContent = "Every extra item delays the moment you learn from real customers. Consider moving some to “Next”.";
+      } else {
+        dot.dataset.state = "ok";
+        title.textContent = `A focused v1 (${n} items)`;
+        text.textContent = "v1 proves one thing: customers will book and pay online, and your team can run bookings from one screen.";
+      }
+    };
+
+    root.addEventListener("click", (e) => {
+      const card = (e.target as HTMLElement).closest<HTMLButtonElement>(".sb-card");
+      if (!card) return;
+      const li = card.parentElement!;
+      const from = (li.parentElement as HTMLElement).dataset.list!;
+      const to = order[(order.indexOf(from) + 1) % order.length];
+      lists[to].append(li);
+      const label = card.childNodes[0].textContent!.trim();
+      card.setAttribute("aria-label", `${label}. Now in ${names[to]}. Select to move.`);
+      card.focus();
+      refresh();
+    });
+    refresh();
+  }
+</script>

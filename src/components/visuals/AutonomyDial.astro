@@ -1,0 +1,225 @@
+---
+// "How much should the agent do on its own?" A four-stop range input drives a comparison.
+// Without JS every level is shown as a list, so nothing is lost.
+const levels = [
+  {
+    name: "Suggest",
+    agent: "Reads the request and suggests what to do.",
+    people: "Do the work themselves, faster.",
+    controls: ["Read-only access", "Suggestions logged"],
+    good: "New workflows, anything customer-facing, teams new to AI",
+    risk: "Very low",
+  },
+  {
+    name: "Draft for approval",
+    agent: "Prepares the full action — reply, order, update — and waits.",
+    people: "Review and approve with one click, or edit.",
+    controls: ["Approval queue with context", "Write access only through the queue", "Every decision recorded"],
+    good: "Refunds, replacements, quotes, outbound messages",
+    risk: "Low",
+  },
+  {
+    name: "Act within limits",
+    agent: "Acts alone below agreed limits; escalates the rest.",
+    people: "Handle exceptions and spot-check samples.",
+    controls: ["Hard limits on amount, volume and type", "Only reversible actions", "Alerts on unusual patterns", "Weekly sample review"],
+    good: "Tagging, routing, data clean-up, low-value routine requests",
+    risk: "Medium — needs good monitoring",
+  },
+  {
+    name: "Act and report",
+    agent: "Completes the task end to end and reports what it did.",
+    people: "Read the report. Investigate anomalies.",
+    controls: ["Everything above", "Evaluations before each change", "Automatic rollback paths", "Cost and error budgets"],
+    good: "Rare. Internal, reversible, well-measured work only",
+    risk: "Higher — we recommend it sparingly",
+  },
+];
+---
+
+<div class="dial" data-dial>
+  <div class="dial-ctl" data-dial-ctl hidden>
+    <label for="dial-range" class="dial-label">How much should the agent do on its own?</label>
+    <input id="dial-range" type="range" min="0" max="3" step="1" value="1" aria-valuetext={levels[1].name} data-dial-range />
+    <ol class="dial-ticks mono" aria-hidden="true">
+      {levels.map((l, i) => <li data-tick={i}>{l.name}</li>)}
+    </ol>
+  </div>
+
+  <div class="dial-cards">
+    {
+      levels.map((l, i) => (
+        <article class="lvl" data-level={i} aria-label={`Level ${i + 1}: ${l.name}`}>
+          <header class="lvl-head">
+            <p class="mono lvl-n">Level {i + 1}</p>
+            <h3 class="h3">{l.name}</h3>
+            <p class="lvl-risk mono">Risk: {l.risk}</p>
+          </header>
+          <dl class="lvl-dl">
+            <div>
+              <dt class="mono">The agent</dt>
+              <dd>{l.agent}</dd>
+            </div>
+            <div>
+              <dt class="mono">Your people</dt>
+              <dd>{l.people}</dd>
+            </div>
+            <div>
+              <dt class="mono">Controls we build</dt>
+              <dd>
+                <ul>
+                  {l.controls.map((c) => (
+                    <li>{c}</li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+            <div>
+              <dt class="mono">Good for</dt>
+              <dd>{l.good}</dd>
+            </div>
+          </dl>
+        </article>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .dial-ctl {
+    padding: clamp(18px, 2.5vw, 28px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--panel);
+    margin-bottom: 16px;
+  }
+  .dial-label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    margin-bottom: 18px;
+  }
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--signal);
+    height: 32px;
+    cursor: pointer;
+  }
+  .dial-ticks {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    font-size: 0.72rem;
+    color: var(--mute);
+    margin-top: 6px;
+  }
+  .dial-ticks li:nth-child(2) {
+    text-align: center;
+    transform: translateX(-16%);
+  }
+  .dial-ticks li:nth-child(3) {
+    text-align: center;
+    transform: translateX(16%);
+  }
+  .dial-ticks li:last-child {
+    text-align: right;
+  }
+  .dial-ticks li[data-on] {
+    color: var(--accent-text);
+    font-weight: 600;
+  }
+  .dial-cards {
+    display: grid;
+    gap: 12px;
+  }
+  @media (min-width: 900px) {
+    :global(html:not(.js)) .dial-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .lvl {
+    padding: clamp(20px, 3vw, 36px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--panel);
+  }
+  .lvl-head {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .lvl-n {
+    color: var(--accent-text);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .lvl-risk {
+    color: var(--mute);
+    font-size: 0.75rem;
+  }
+  .lvl-dl {
+    display: grid;
+    gap: 18px;
+  }
+  @media (min-width: 900px) {
+    :global(.js) .lvl-dl {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+    }
+  }
+  .lvl-dl dt {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+    margin-bottom: 6px;
+  }
+  .lvl-dl ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .lvl-dl li {
+    display: flex;
+    gap: 8px;
+  }
+  .lvl-dl li::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    margin-top: 9px;
+    border-radius: 50%;
+    background: var(--ok-t);
+    flex: none;
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-dial]");
+  if (root) {
+    const ctl = root.querySelector<HTMLElement>("[data-dial-ctl]")!;
+    const range = root.querySelector<HTMLInputElement>("[data-dial-range]")!;
+    const cards = [...root.querySelectorAll<HTMLElement>("[data-level]")];
+    const ticks = [...root.querySelectorAll<HTMLElement>("[data-tick]")];
+    ctl.hidden = false;
+    const update = () => {
+      const v = +range.value;
+      cards.forEach((c, i) => (c.hidden = i !== v));
+      ticks.forEach((t, i) => t.toggleAttribute("data-on", i === v));
+      range.setAttribute("aria-valuetext", ticks[v].textContent!.trim());
+    };
+    range.addEventListener("input", update);
+    ticks.forEach((t, i) =>
+      t.addEventListener("click", () => {
+        range.value = String(i);
+        update();
+      }),
+    );
+    update();
+  }
+</script>

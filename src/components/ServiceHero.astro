@@ -1,0 +1,111 @@
+---
+import Icon from "./Icon.astro";
+interface Props {
+  index: string;
+  name: string;
+  title: string;
+  lede: string;
+  cta: { label: string; href: string };
+  secondary?: { label: string; href: string };
+}
+const { index, name, title, lede, cta, secondary } = Astro.props;
+---
+
+<section class="sh s-dark" aria-labelledby="sh-title">
+  <div class="sh-grid" aria-hidden="true"></div>
+  <div class="wrap sh-inner">
+    <nav class="crumbs mono" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span><a href="/#capabilities">Capabilities</a><span aria-hidden="true">/</span><span aria-current="page">{name}</span>
+    </nav>
+    <div class="sh-top">
+      <p class="sh-idx mono"><span>{index}</span> {name}</p>
+      <h1 id="sh-title" class="display-l sh-title" set:html={title} />
+      <div class="sh-foot">
+        <p class="lede">{lede}</p>
+        <div class="btn-row">
+          <a href={cta.href} class="btn btn--primary">{cta.label} <Icon name="arrow" /></a>
+          {secondary && <a href={secondary.href} class="btn btn--ghost">{secondary.label}</a>}
+        </div>
+      </div>
+    </div>
+    <div class="sh-visual">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .sh {
+    position: relative;
+    overflow: hidden;
+    padding-top: clamp(28px, 4vw, 48px);
+    padding-bottom: clamp(56px, 7vw, 104px);
+  }
+  .sh-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(80% 50% at 30% 0%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(80% 50% at 30% 0%, #000 20%, transparent 75%);
+    pointer-events: none;
+  }
+  .sh-inner {
+    position: relative;
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--ink-faint);
+    font-size: 0.72rem;
+  }
+  .crumbs a {
+    color: var(--ink-mute);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--ink-text);
+  }
+  .sh-top {
+    margin-top: clamp(40px, 6vw, 80px);
+  }
+  .sh-idx {
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+  }
+  .sh-idx span {
+    color: var(--signal);
+    margin-right: 6px;
+  }
+  .sh-title {
+    margin-top: 20px;
+    max-width: 16ch;
+  }
+  .sh-title :global(em) {
+    font-style: normal;
+    color: var(--signal);
+  }
+  .sh-foot {
+    display: grid;
+    gap: 28px;
+    margin-top: 32px;
+    align-items: end;
+  }
+  @media (min-width: 1000px) {
+    .sh-foot {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 48px;
+    }
+  }
+  .sh-visual {
+    margin-top: clamp(44px, 6vw, 72px);
+  }
+  .sh-visual:empty {
+    display: none;
+  }
+</style>

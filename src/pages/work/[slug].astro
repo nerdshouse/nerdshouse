@@ -1,0 +1,510 @@
+---
+import { Image } from "astro:assets";
+import Base from "@layouts/Base.astro";
+import CtaBand from "@components/CtaBand.astro";
+import Icon from "@components/Icon.astro";
+import { PROJECTS, getProject } from "@data/work";
+import { CASES } from "@data/cases";
+import { CAPABILITIES, SITE } from "@data/site";
+
+export function getStaticPaths() {
+  return PROJECTS.filter((p) => p.detail).map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const p = getProject(slug!)!;
+const c = CASES[slug!];
+const cap = CAPABILITIES.find((x) => x.slug === p.capability)!;
+const others = PROJECTS.filter((x) => x.detail && x.slug !== p.slug);
+const extraShots = (p.shots ?? []).filter((s) => s.kind !== "mobile");
+const mobile = p.shots?.find((s) => s.kind === "mobile");
+
+const article = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: `${p.name}: ${p.headline}`,
+  about: p.client,
+  author: { "@id": `${SITE.url}/#organization` },
+  publisher: { "@id": `${SITE.url}/#organization` },
+  image: new URL(p.hero!.src.src, SITE.url).toString(),
+  mainEntityOfPage: `${SITE.url}/work/${p.slug}`,
+};
+---
+
+<Base
+  title={`${p.name} Case Study — ${p.sector.split(" · ")[0]} | Nerdshouse`}
+  description={`${p.summary.slice(0, 150).replace(/\s+\S*$/, "")}…`}
+  jsonLd={[article]}
+  breadcrumbs={[{ name: "Work", path: "/work" }, { name: p.name, path: `/work/${p.slug}` }]}
+>
+  <section class="ch s-dark" aria-labelledby="ch-title">
+    <div class="wrap">
+      <nav class="crumbs mono" aria-label="Breadcrumb">
+        <a href="/">Home</a><span aria-hidden="true">/</span><a href="/work">Work</a><span aria-hidden="true">/</span><span aria-current="page">{p.name}</span>
+      </nav>
+      <p class="ch-client mono">Case study · {p.client}</p>
+      <h1 id="ch-title" class="display-l ch-title">{p.headline}</h1>
+      <p class="lede ch-lede">{p.summary}</p>
+
+      <dl class="ch-facts">
+        <div><dt class="mono">Client</dt><dd>{p.client}</dd></div>
+        <div><dt class="mono">Sector</dt><dd>{p.sector}</dd></div>
+        {p.year && <div><dt class="mono">Period</dt><dd>{p.year}</dd></div>}
+        <div><dt class="mono">Status</dt><dd class="ch-status"><span class="dot" data-state="ok"></span>{p.status}</dd></div>
+      </dl>
+    </div>
+    <div class="wrap ch-media">
+      <figure>
+        <div class="browser">
+          <div class="browser__bar">
+            <span class="browser__dots"><i></i><i></i><i></i></span>
+            <span class="browser__url">{p.hero!.url}</span>
+          </div>
+          <Image src={p.hero!.src} alt={p.hero!.alt} widths={[640, 1000, 1400, 1900]} sizes="(min-width: 1440px) 1360px, 94vw" loading="eager" />
+        </div>
+        {p.hero!.caption && <figcaption class="label-real">{p.hero!.caption}</figcaption>}
+      </figure>
+    </div>
+  </section>
+
+  <article class="cs s-white">
+    <div class="wrap cs-grid">
+      <aside class="cs-side">
+        <div class="cs-side-inner">
+          <p class="mono cs-side-h">Our role</p>
+          <ul class="cs-role">{p.role.map((r) => <li>{r}</li>)}</ul>
+          <p class="mono cs-side-h">Built with</p>
+          <ul class="tag-list">{p.stack.map((s) => <li class="chip">{s}</li>)}</ul>
+          <p class="mono cs-side-h">Capability</p>
+          <a href={`/${cap.slug}`} class="link-arrow">{cap.short} <Icon name="arrow" /></a>
+          {p.liveUrl && (
+            <>
+              <p class="mono cs-side-h">Live</p>
+              <a href={p.liveUrl} rel="noopener" target="_blank" class="link-arrow">{p.liveUrl.replace(/^https?:\/\/(www\.)?/, "")}<span class="sr-only"> (opens in a new tab)</span> <Icon name="arrow-up-right" /></a>
+            </>
+          )}
+        </div>
+      </aside>
+
+      <div class="cs-main">
+        <section class="cs-sec" aria-labelledby="ctx">
+          <h2 id="ctx" class="cs-h"><span class="mono accent">01</span> Context</h2>
+          <p class="body-l">{c.context}</p>
+        </section>
+
+        <section class="cs-sec" aria-labelledby="chal">
+          <h2 id="chal" class="cs-h"><span class="mono accent">02</span> The challenge</h2>
+          {c.challenge.map((t) => <p class="body-l">{t}</p>)}
+        </section>
+
+        <section class="cs-sec" aria-labelledby="sys">
+          <h2 id="sys" class="cs-h"><span class="mono accent">03</span> What we built</h2>
+          <ol class="mods">
+            {
+              c.modules.map((m, i) => (
+                <li class="mod">
+                  <div class="mod-head">
+                    <span class="mono mod-n">{String(i + 1).padStart(2, "0")}</span>
+                    <h3 class="h4">{m.name}</h3>
+                    {m.when && <span class="mono faint mod-when">{m.when}</span>}
+                  </div>
+                  <p>{m.what}</p>
+                  <ul class="mod-list">{m.details.map((d) => <li>{d}</li>)}</ul>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+
+        {(extraShots.length > 0 || mobile) && (
+          <section class="cs-sec" aria-labelledby="screens">
+            <h2 id="screens" class="cs-h"><span class="mono accent">04</span> Screens</h2>
+            <div class="screens">
+              {extraShots.map((s) => (
+                <figure class="scr">
+                  <div class="browser">
+                    <div class="browser__bar"><span class="browser__dots"><i /><i /><i /></span><span class="browser__url">{s.url}</span></div>
+                    <Image src={s.src} alt={s.alt} widths={[480, 800, 1100]} sizes="(min-width: 1100px) 620px, 92vw" />
+                  </div>
+                  {s.caption && <figcaption class="label-real">{s.caption}</figcaption>}
+                </figure>
+              ))}
+              {mobile && (
+                <figure class="scr scr--phone">
+                  <div class="phone"><Image src={mobile.src} alt={mobile.alt} widths={[240, 390]} sizes="240px" /></div>
+                  {mobile.caption && <figcaption class="label-real">{mobile.caption}</figcaption>}
+                </figure>
+              )}
+            </div>
+          </section>
+        )}
+
+        <section class="cs-sec" aria-labelledby="eng">
+          <h2 id="eng" class="cs-h"><span class="mono accent">{extraShots.length > 0 || mobile ? "05" : "04"}</span> Engineering notes</h2>
+          <dl class="engn">
+            {c.engineering.map((e) => (
+              <div><dt class="mono">{e.k}</dt><dd>{e.v}</dd></div>
+            ))}
+          </dl>
+        </section>
+
+        <section class="cs-sec cs-honest" aria-labelledby="stat">
+          <h2 id="stat" class="cs-h"><span class="mono accent">{extraShots.length > 0 || mobile ? "06" : "05"}</span> Status and results</h2>
+          <div class="hon">
+            <div>
+              <p class="mono hon-h"><span class="dot" data-state="ok"></span> Where it stands</p>
+              <ul>{c.status.map((s) => <li>{s}</li>)}</ul>
+            </div>
+            <div>
+              <p class="mono hon-h"><span class="dot" data-state="wait"></span> Not shared yet</p>
+              <ul>{c.notShared.map((s) => <li>{s}</li>)}</ul>
+            </div>
+          </div>
+          <p class="mono cs-source">Sources: {c.source}</p>
+        </section>
+      </div>
+    </div>
+  </article>
+
+  <section class="section section--tight s-light" aria-labelledby="next-title">
+    <div class="wrap">
+      <h2 id="next-title" class="h3">More case studies</h2>
+      <ul class="next">
+        {others.map((o) => (
+          <li>
+            <a href={`/work/${o.slug}`} class="next-card">
+              <span class="mono accent">{o.client}</span>
+              <span class="h4">{o.headline}</span>
+              <Icon name="arrow" class="next-ico" />
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href="/work" class="next-card next-card--all">
+            <span class="mono accent">All work</span>
+            <span class="h4">Every project, with real screens.</span>
+            <Icon name="arrow" class="next-ico" />
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title="Building something similar?" lede="Tell us what you're working on. If it looks like something we've built before, we'll say so — and tell you what we learned." />
+</Base>
+
+<style>
+  .ch {
+    padding-top: clamp(28px, 4vw, 48px);
+    padding-bottom: clamp(48px, 6vw, 80px);
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--ink-faint);
+    font-size: 0.72rem;
+  }
+  .crumbs a {
+    color: var(--ink-mute);
+    text-decoration: none;
+  }
+  .ch-client {
+    margin-top: clamp(40px, 6vw, 72px);
+    color: var(--signal);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+  }
+  .ch-title {
+    margin-top: 18px;
+    max-width: 18ch;
+  }
+  .ch-lede {
+    margin-top: 28px;
+  }
+  .ch-facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 40px;
+    border-top: 1px solid var(--ink-line);
+  }
+  @media (min-width: 960px) {
+    .ch-facts {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .ch-facts dd {
+    overflow-wrap: anywhere;
+  }
+  .ch-facts div {
+    padding: 16px 16px 16px 0;
+    border-bottom: 1px solid var(--ink-line);
+  }
+  .ch-facts dt {
+    color: var(--ink-faint);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .ch-status {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .ch-media {
+    margin-top: clamp(40px, 5vw, 64px);
+  }
+  .ch-media figcaption {
+    margin-top: 12px;
+  }
+  .ch-media :global(img) {
+    width: 100%;
+  }
+  .cs {
+    padding-block: var(--section-y);
+  }
+  .cs-grid {
+    display: grid;
+    gap: 48px;
+  }
+  @media (min-width: 1100px) {
+    .cs-grid {
+      grid-template-columns: 300px 1fr;
+      gap: 96px;
+    }
+    .cs-side-inner {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+    }
+  }
+  .cs-grid > *,
+  .cs-side-inner > * {
+    min-width: 0;
+  }
+  .cs-side-inner {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .cs-side-h {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+    margin-top: 18px;
+  }
+  .cs-side-h:first-child {
+    margin-top: 0;
+  }
+  .cs-role {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .cs-side .link-arrow {
+    justify-self: start;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+  }
+  .cs-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(56px, 7vw, 88px);
+    max-width: 860px;
+  }
+  .cs-sec {
+    display: grid;
+    gap: 16px;
+  }
+  .cs-h {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .cs-h .mono {
+    font-size: 0.8rem;
+  }
+  .mods {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  @media (min-width: 760px) {
+    .mods {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .mod {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    padding: 22px;
+    border-radius: var(--radius-l);
+    border: 1px solid var(--line);
+    background: var(--light-1);
+  }
+  .mod-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 10px;
+  }
+  .mod-n {
+    color: var(--accent-text);
+  }
+  .mod-when {
+    width: 100%;
+    font-size: 0.7rem;
+  }
+  .mod-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+    color: var(--mute);
+    font-size: 0.94rem;
+  }
+  .mod-list li {
+    display: flex;
+    gap: 8px;
+  }
+  .mod-list li::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    margin-top: 9px;
+    border-radius: 50%;
+    background: var(--ok-ink);
+    flex: none;
+  }
+  .screens {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+  @media (min-width: 760px) {
+    .screens {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+  }
+  .scr figcaption {
+    margin-top: 10px;
+  }
+  .scr :global(img) {
+    width: 100%;
+  }
+  .scr--phone .phone {
+    width: 220px;
+  }
+  .engn {
+    border-top: 1px solid var(--line);
+  }
+  .engn div {
+    display: grid;
+    gap: 4px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 640px) {
+    .engn div {
+      grid-template-columns: 180px 1fr;
+      gap: 24px;
+    }
+  }
+  .engn dt {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent-text);
+    padding-top: 3px;
+  }
+  .hon {
+    display: grid;
+    gap: 12px;
+  }
+  @media (min-width: 760px) {
+    .hon {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .hon > div {
+    padding: 20px;
+    border-radius: var(--radius-l);
+    border: 1px solid var(--line);
+  }
+  .hon-h {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    color: var(--mute);
+  }
+  .hon ul {
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+  }
+  .cs-source {
+    color: var(--faint);
+    font-size: 0.72rem;
+  }
+  .next {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  @media (min-width: 900px) {
+    .next {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .next-card {
+    height: 100%;
+    display: grid;
+    gap: 10px;
+    padding: 24px;
+    border-radius: var(--radius-l);
+    border: 1px solid var(--line);
+    background: var(--white);
+    text-decoration: none;
+    transition: border-color 0.2s var(--ease);
+  }
+  .next-card:hover {
+    border-color: var(--text);
+  }
+  .next-card .mono {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .next-card :global(.next-ico) {
+    width: 20px;
+    height: 20px;
+    color: var(--accent-text);
+  }
+  .next-card--all {
+    background: var(--ink-0);
+    color: var(--ink-text);
+    border-color: var(--ink-0);
+  }
+  .next-card--all .accent {
+    color: var(--signal);
+  }
+</style>

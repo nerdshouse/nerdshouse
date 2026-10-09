@@ -1,17 +1,19 @@
 import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
-import image from "@astrojs/image";
-import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
-  site: "https://astroship.web3templates.com",
+  site: "https://www.nerdshouse.com",
+  devToolbar: { enabled: false },
+  trailingSlash: "never",
+  build: { format: "directory" },
+  // Retired URLs from the previous site. Configure the same as permanent (301) redirects at the host.
+  redirects: {
+    "/services": "/#capabilities",
+    "/blog": "/work",
+  },
   integrations: [
-    tailwind(),
-    image({
-      serviceEntryPoint: "@astrojs/image/sharp",
+    sitemap({
+      filter: (page) => !page.includes("/404"),
     }),
-    mdx(),
-    sitemap(),
   ],
 });

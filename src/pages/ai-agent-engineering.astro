@@ -1,0 +1,377 @@
+---
+import Base from "@layouts/Base.astro";
+import ServiceHero from "@components/ServiceHero.astro";
+import AgentAnatomy from "@components/visuals/AgentAnatomy.astro";
+import AutonomyDial from "@components/visuals/AutonomyDial.astro";
+import AgentCard from "@components/visuals/AgentCard.astro";
+import Fit from "@components/Fit.astro";
+import Faq from "@components/Faq.astro";
+import CtaBand from "@components/CtaBand.astro";
+import { SITE } from "@data/site";
+
+const title = "AI Agent & Agentic Workflow Engineering | Nerdshouse";
+const description =
+  "AI agents and AI-assisted workflows connected to your real systems — with scoped permissions, human approval for risky actions, evaluation and audit trails.";
+
+const service = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "AI & Agentic Engineering",
+  serviceType: "AI agent and workflow engineering",
+  description,
+  url: `${SITE.url}/ai-agent-engineering`,
+  provider: { "@id": `${SITE.url}/#organization` },
+};
+
+const ladder = [
+  {
+    h: "A rule is enough",
+    sign: "The decision is always the same given the same inputs.",
+    eg: "“If the payment fails, message the customer and flag the order.”",
+    build: "A plain workflow. Cheaper, faster and easier to trust.",
+  },
+  {
+    h: "A workflow with one AI step",
+    sign: "Mostly predictable, but one step needs reading or judgement.",
+    eg: "“Read the invoice PDF, extract the GST number and totals, then follow the normal approval path.”",
+    build: "A normal system with an AI step that is checked and logged.",
+  },
+  {
+    h: "An agent",
+    sign: "The steps genuinely change case by case, across several tools.",
+    eg: "“Work out why this order is stuck, check the courier and the payment, and propose a fix.”",
+    build: "An agent with scoped tools, limits, approvals and traces.",
+  },
+];
+
+const examples = [
+  { t: "Support triage", tools: "Inbox · store orders · courier status", human: "Approves refunds and replacements" },
+  { t: "Document intake", tools: "Email attachments · accounting · supplier records", human: "Reviews low-confidence extractions" },
+  { t: "Lead qualification on WhatsApp", tools: "WhatsApp Business · CRM · product catalogue", human: "Takes over hot leads and pricing" },
+  { t: "Internal knowledge assistant", tools: "SOPs · policies · past tickets (read-only)", human: "Owns and corrects the source documents" },
+  { t: "Operations reconciliation", tools: "Payments · orders · inventory", human: "Resolves flagged mismatches" },
+];
+
+const engineering = [
+  { t: "Evaluation sets", d: "Real examples with known answers, run before every prompt or model change." },
+  { t: "Cost and latency budgets", d: "Agreed limits per task, monitored, with cheaper paths where they are good enough." },
+  { t: "Versioned prompts and tools", d: "Changes reviewed and released like code, so you can roll back." },
+  { t: "Data boundaries", d: "Only the data a task needs is sent; personal fields masked where possible." },
+  { t: "Monitoring", d: "Failure rates, escalations and unusual behaviour visible to your team." },
+  { t: "Graceful fallback", d: "When the model or a tool is unavailable, work queues for a person instead of failing." },
+];
+
+const faq = [
+  {
+    q: "Which AI models do you use?",
+    a: "<p>We choose per task — usually a hosted model from a major provider, sometimes a smaller or open model where cost, speed or data rules call for it. We'll explain the trade-off and the provider's data terms before anything is built.</p>",
+  },
+  {
+    q: "Will our customer data be used to train someone's model?",
+    a: "<p>We use provider settings and agreements that exclude your data from training where the provider offers them, and we send only the fields a task needs. We'll document exactly what leaves your systems.</p>",
+  },
+  {
+    q: "What if the agent makes a mistake?",
+    a: "<p>That is the design question we start with. Risky actions need approval, limits stop the rest, and every run has a trace so mistakes are found and corrected — and turned into new evaluation cases.</p>",
+  },
+  {
+    q: "Can you add AI to software we already have?",
+    a: "<p>Usually, yes. Most of the work is the integration: reading from and writing to your existing systems safely. We'll look at your APIs and data first.</p>",
+  },
+  {
+    q: "Have you built agents like this before?",
+    a: "<p>We have built and run the foundations in production for clients — integrations, webhooks, WhatsApp messaging, role-based permissions and audit history. Dedicated AI agent engagements are newer for us. We'll tell you which parts of your project we have done before, and we run first projects as small, scoped pilots.</p>",
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={[service]} breadcrumbs={[{ name: "AI & Agentic Engineering", path: "/ai-agent-engineering" }]}>
+  <ServiceHero
+    index="01"
+    name="AI & Agentic Engineering"
+    title="Agents with permissions, approvals and a <em>paper trail.</em>"
+    lede="We build AI that does real work inside your systems — reading, deciding and acting — with clear limits on what it may do, a person in the loop where it matters, and a record of everything."
+    cta={{ label: "Discuss an AI workflow", href: "/contact?topic=ai" }}
+    secondary={{ label: "How much should it do alone?", href: "#autonomy" }}
+  >
+    <AgentAnatomy />
+  </ServiceHero>
+
+  <section class="section s-light" id="autonomy" aria-labelledby="auto-title">
+    <div class="wrap">
+      <header class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow">Autonomy is a design decision</p>
+          <h2 id="auto-title" class="h2" style="margin-top:18px">Decide how much it does alone.</h2>
+        </div>
+        <p class="lede">
+          “Fully autonomous” is rarely the right answer. Move the dial to see what changes for the agent, for your people, and in
+          the controls we build.
+        </p>
+      </header>
+      <AutonomyDial />
+    </div>
+  </section>
+
+  <section class="section s-dark-2" aria-labelledby="need-title">
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="eyebrow">Honest advice first</p>
+        <h2 id="need-title" class="h2">Do you need an agent at all?</h2>
+        <p class="lede">Often not. We'll recommend the simplest thing that works — and only add AI where it earns its place.</p>
+      </header>
+      <ol class="ladder">
+        {
+          ladder.map((l, i) => (
+            <li class="rung">
+              <p class="mono rung-n">{String(i + 1).padStart(2, "0")}</p>
+              <h3 class="h3">{l.h}</h3>
+              <p class="rung-sign">{l.sign}</p>
+              <p class="rung-eg">{l.eg}</p>
+              <p class="rung-build mono">
+                <span>We'd build</span>
+                {l.build}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section s-white" aria-labelledby="ex-title">
+    <div class="wrap ex-grid">
+      <div>
+        <header class="sec-head">
+          <p class="eyebrow">Where it helps</p>
+          <h2 id="ex-title" class="h2">Example workflows.</h2>
+          <p class="lede">
+            These are examples of the kind of work we design for, not client case studies. Every one keeps a person on the decisions
+            that matter.
+          </p>
+        </header>
+        <div class="ex-table" role="table" aria-label="Example AI workflows">
+          <div class="ex-row ex-row--h" role="row">
+            <span role="columnheader" class="mono">Workflow</span>
+            <span role="columnheader" class="mono">Tools it touches</span>
+            <span role="columnheader" class="mono">Where a person decides</span>
+          </div>
+          {
+            examples.map((e) => (
+              <div class="ex-row" role="row">
+                <span role="cell" class="ex-t">{e.t}</span>
+                <span role="cell" class="muted">{e.tools}</span>
+                <span role="cell" class="ex-h">
+                  <span class="dot" data-state="wait" />
+                  {e.human}
+                </span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+      <div class="ex-demo">
+        <p class="mono ex-demo-h">Try the approval step</p>
+        <AgentCard compact />
+      </div>
+    </div>
+  </section>
+
+  <section class="section s-dark" aria-labelledby="eng2-title">
+    <div class="wrap">
+      <header class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow">Included in every AI build</p>
+          <h2 id="eng2-title" class="h2" style="margin-top:18px">The engineering that makes it dependable.</h2>
+        </div>
+        <p class="lede">A demo needs a prompt. A system your team relies on needs everything below.</p>
+      </header>
+      <ul class="eng-list">
+        {
+          engineering.map((e, i) => (
+            <li>
+              <span class="mono accent">{String(i + 1).padStart(2, "0")}</span>
+              <h3 class="h4">{e.t}</h3>
+              <p class="muted">{e.d}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <aside class="status-note" aria-label="Where we are with AI work">
+        <p class="mono"><span class="dot" data-state="wait"></span> Where we are, honestly</p>
+        <p>
+          We have built the foundations agents depend on into live client systems: integrations, webhooks, WhatsApp messaging,
+          role-based permissions and audit history. Dedicated agent projects are newer for us, so we start with small, scoped
+          pilots and tell you which parts we have done before.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <Fit
+    good={[
+      "A repetitive workflow costs your team hours every week",
+      "The information it needs already exists in your systems or documents",
+      "You can name who approves the risky decisions",
+      "You want a pilot first, then to expand what works",
+    ]}
+    bad={[
+      "You want “an AI strategy” without a specific workflow in mind",
+      "The process changes every week and isn't written down anywhere",
+      "Mistakes would be unacceptable even with a person approving",
+      "You need it unattended from day one",
+    ]}
+  />
+  <Faq items={faq} />
+  <CtaBand title="Bring us one workflow." lede="Describe a task your team repeats. We'll tell you whether it needs a rule, an AI step or an agent — and what the first pilot would look like." />
+</Base>
+
+<style>
+  .ladder {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  @media (min-width: 960px) {
+    .ladder {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .rung {
+    display: grid;
+    grid-template-rows: auto auto auto 1fr auto;
+    gap: 12px;
+    padding: clamp(22px, 3vw, 32px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--panel);
+  }
+  .rung:last-child {
+    border-color: rgba(255, 106, 43, 0.4);
+  }
+  .rung-n {
+    color: var(--accent-text);
+  }
+  .rung-sign {
+    color: var(--text);
+  }
+  .rung-eg {
+    color: var(--mute);
+    font-style: italic;
+  }
+  .rung-build {
+    display: grid;
+    gap: 4px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+    color: var(--text);
+    font-size: 0.8rem;
+  }
+  .rung-build span {
+    color: var(--ok);
+    text-transform: uppercase;
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+  }
+  .ex-grid {
+    display: grid;
+    gap: 48px;
+  }
+  @media (min-width: 1100px) {
+    .ex-grid {
+      grid-template-columns: 1.25fr 0.9fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .ex-demo {
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+    }
+  }
+  .ex-table {
+    border-top: 1px solid var(--line);
+  }
+  .ex-row {
+    display: grid;
+    gap: 4px 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 720px) {
+    .ex-row {
+      grid-template-columns: 1fr 1.2fr 1.1fr;
+    }
+  }
+  .ex-row--h {
+    display: none;
+  }
+  @media (min-width: 720px) {
+    .ex-row--h {
+      display: grid;
+      padding: 10px 0;
+    }
+  }
+  .ex-row--h span {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+  }
+  .ex-t {
+    font-weight: 650;
+  }
+  .ex-h {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .ex-demo-h {
+    color: var(--mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+    margin-bottom: 12px;
+  }
+  .eng-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 32px 40px;
+  }
+  @media (min-width: 720px) {
+    .eng-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1100px) {
+    .eng-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .eng-list li {
+    display: grid;
+    gap: 8px;
+    padding-top: 18px;
+    border-top: 1px solid var(--ink-line);
+  }
+  .status-note {
+    margin-top: clamp(48px, 6vw, 72px);
+    padding: clamp(20px, 3vw, 28px);
+    border-radius: var(--radius-l);
+    border: 1px solid rgba(255, 194, 61, 0.35);
+    background: rgba(255, 194, 61, 0.04);
+    display: grid;
+    gap: 8px;
+    max-width: 900px;
+  }
+  .status-note .mono {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: var(--wait);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+  }
+</style>

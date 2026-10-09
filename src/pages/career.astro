@@ -1,77 +1,78 @@
 ---
-import { getCollection } from "astro:content";
-import { Picture } from "@astrojs/image/components";
-import Layout from "@layouts/Layout.astro";
-import Container from "@components/container.astro";
-import Sectionhead from "@components/sectionhead.astro";
-
-// Filter team entries with 'draft: false' & date before current date
-const publishedTeamMembers = await getCollection("team", ({ data }) => {
-  return !data.draft && data.publishDate < new Date();
-});
+import Base from "@layouts/Base.astro";
+import Icon from "@components/Icon.astro";
+import { SITE } from "@data/site";
 ---
 
-<Layout title="Career | Nerdshouse Technologies">
-  <Container>
-    <Sectionhead>
-      <Fragment slot="title">Career</Fragment>
-      <Fragment slot="desc">Let's build something great together.</Fragment>
-    </Sectionhead>
-
-    <div class="flex flex-col justify-center gap-3 mx-auto max-w-3xl mt-16">
-      <h2 class="font-bold text-3xl text-center text-gray-800">
-        Empowering the world with Technology.
-      </h2>
-      <p class="text-lg mx-auto text-center max-w-3xl text-slate-500">
-        Though our team is relatively small, we are proud of the company culture
-        we have built that our employees love to come to work every day.
-        <br />
-        So, Come and check out if you are planning to advance your career and gain
-        hands-on experience in a thriving and supportive workplace. We promise you,
-        we can definitely be your extended family.
-      </p>
+<Base
+  title="Careers at Nerdshouse — Engineering and Design in Surat"
+  description="Work with Nerdshouse, a small technology and AI engineering team in Surat, Gujarat. How we hire and how to get in touch."
+  breadcrumbs={[{ name: "Careers", path: "/career" }]}
+>
+  <section class="cr s-dark" aria-labelledby="cr-title">
+    <div class="wrap cr-grid">
+      <div>
+        <p class="eyebrow">Careers</p>
+        <h1 id="cr-title" class="display-l" style="margin-top:24px">Build things people rely on.</h1>
+      </div>
+      <div class="cr-copy">
+        <p class="lede">
+          We're a small team in Surat building AI workflows, products and business systems for real clients. We hire when we have
+          the right work — not to fill seats.
+        </p>
+        <div class="cr-box">
+          <p class="mono cr-h">How to apply</p>
+          <p>
+            Send a short note and links to work you're proud of — code, products, designs — to
+            <a href={`mailto:${SITE.email}?subject=Careers`}>{SITE.email}</a> with “Careers” in the subject. Tell us what you'd like to
+            build.
+          </p>
+          <a href={`mailto:${SITE.email}?subject=Careers`} class="btn btn--primary">Email us <Icon name="arrow" /></a>
+        </div>
+        <p class="mono faint cr-note">We don't list roles here when none are open.</p>
+      </div>
     </div>
-    <ul class="grid md:grid-cols-3 gap-10 mx-auto max-w-4xl mt-12">
-      <li
-        class="border border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
-        <a href={`/career/frontend-developer`}>
-          <div class="group">
-            <div class="m-6 flex flex-col justify-between md:h-20">
-              <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
-                Front-end Developer
-              </h2>
-              <h3 class="text-sm text-indigo-600">More Details</h3>
-            </div>
-          </div>
-        </a>
-      </li>
-      <li
-        class="border border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
-        <a href={`/career/it-business-analyst`}>
-          <div class="group">
-            <div class="m-6 flex flex-col justify-between md:h-20">
-              <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
-                IT Business Analyst
-              </h2>
-              <h3 class="text-sm text-indigo-600">More Details</h3>
-            </div>
-          </div>
-        </a>
-      </li>
-      <li
-        class="border-2 border-gray-100 rounded-lg shadow-sm hover:shadow-xl hover:border-gray-300 hover:translate-y-1 transition-all">
-        <a href={`/career/digital-marketing-manager`}>
-          <div class="group">
-            <div class="m-6 flex flex-col justify-between md:h-20">
-              <h2 class="text-xl font-bold text-gray-800 hover:text-gray-900">
-                Digital Marketing Manager
-              </h2>
-              <h3 class="text-sm text-indigo-600">More Details</h3>
-            </div>
-          </div>
-        </a>
-      </li>
-    </ul>
+  </section>
+</Base>
 
-  </Container>
-</Layout>
+<style>
+  .cr {
+    padding-block: clamp(56px, 8vw, 128px);
+  }
+  .cr-grid {
+    display: grid;
+    gap: 40px;
+  }
+  @media (min-width: 1000px) {
+    .cr-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+    }
+  }
+  .cr-copy {
+    display: grid;
+    gap: 24px;
+  }
+  .cr-box {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    padding: 24px;
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-l);
+    background: var(--ink-1);
+  }
+  .cr-box a:not(.btn) {
+    color: var(--signal);
+  }
+  .cr-h {
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+  }
+  .cr-note {
+    font-size: 0.74rem;
+  }
+</style>

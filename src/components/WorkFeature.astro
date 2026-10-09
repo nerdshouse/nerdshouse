@@ -1,0 +1,164 @@
+---
+import { Image } from "astro:assets";
+import Icon from "./Icon.astro";
+import type { Project } from "@data/work";
+import { CAPABILITIES } from "@data/site";
+
+interface Props {
+  project: Project;
+  flip?: boolean;
+  headingLevel?: "h2" | "h3";
+}
+const { project: p, flip = false, headingLevel = "h3" } = Astro.props;
+const H = headingLevel;
+const cap = CAPABILITIES.find((c) => c.slug === p.capability);
+const phone = p.shots?.find((s) => s.kind === "mobile");
+---
+
+<article class:list={["wf", flip && "wf--flip"]} aria-labelledby={`wf-${p.slug}`} data-reveal>
+  <div class:list={["wf-media", phone && "wf-media--phone"]}>
+    <div class="wf-stage">
+    {
+      p.hero && (
+        <div class="browser wf-browser">
+          <div class="browser__bar">
+            <span class="browser__dots">
+              <i />
+              <i />
+              <i />
+            </span>
+            <span class="browser__url">{p.hero.url}</span>
+          </div>
+          <Image src={p.hero.src} alt={p.hero.alt} widths={[560, 900, 1300]} sizes="(min-width: 1100px) 760px, 94vw" />
+        </div>
+      )
+    }
+    {
+      phone && (
+        <div class="phone wf-phone">
+          <Image src={phone.src} alt={phone.alt} widths={[200, 320]} sizes="180px" />
+        </div>
+      )
+    }
+    </div>
+    {p.hero?.caption && <p class="wf-cap label-real">{p.hero.caption}</p>}
+  </div>
+
+  <div class="wf-text">
+    <p class="wf-client mono">{p.client}<span class="faint"> · {p.sector}</span></p>
+    <H id={`wf-${p.slug}`} class="h3 wf-title">{p.headline}</H>
+    <p class="wf-sum muted">{p.summary}</p>
+    <dl class="wf-dl">
+      <div>
+        <dt class="mono">Our role</dt>
+        <dd>{p.role.join(" · ")}</dd>
+      </div>
+      {
+        p.stack.length > 0 && (
+          <div>
+            <dt class="mono">Built with</dt>
+            <dd class="mono wf-stack">{p.stack.join("  ·  ")}</dd>
+          </div>
+        )
+      }
+      <div>
+        <dt class="mono">Status</dt>
+        <dd class="wf-status">
+          <span class="dot" data-state="ok" />
+          {p.status}
+        </dd>
+      </div>
+    </dl>
+    <div class="wf-links">
+      {
+        p.detail && (
+          <a href={`/work/${p.slug}`} class="btn btn--ink">
+            Read the case study <Icon name="arrow" />
+          </a>
+        )
+      }
+      {cap && <a href={`/${cap.slug}`} class="link-arrow">{cap.short}</a>}
+    </div>
+  </div>
+</article>
+
+<style>
+  .wf {
+    display: grid;
+    gap: 32px;
+    align-items: center;
+  }
+  @media (min-width: 1100px) {
+    .wf {
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.9fr);
+      gap: clamp(40px, 5vw, 80px);
+    }
+    .wf--flip .wf-media {
+      order: 2;
+    }
+  }
+  .wf-stage {
+    position: relative;
+  }
+  .wf-browser :global(img) {
+    width: 100%;
+  }
+  .wf-phone {
+    position: absolute;
+    right: -8px;
+    bottom: -28px;
+    width: clamp(110px, 20%, 180px);
+  }
+  .wf-media--phone .wf-cap {
+    padding-right: clamp(120px, 22%, 200px);
+  }
+  .wf-cap {
+    margin-top: 14px;
+    color: var(--ok-t);
+  }
+  .wf-text {
+    display: grid;
+    gap: 18px;
+    align-content: start;
+  }
+  .wf-client {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent-text);
+  }
+  .wf-title {
+    font-size: clamp(1.6rem, 1.15rem + 1.5vw, 2.4rem);
+  }
+  .wf-dl {
+    display: grid;
+    gap: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+  .wf-dl dt {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+  }
+  .wf-dl dd {
+    font-size: 0.95rem;
+  }
+  .wf-stack {
+    font-size: 0.78rem !important;
+    color: var(--mute);
+  }
+  .wf-status {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .wf-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 24px;
+    margin-top: 6px;
+  }
+</style>

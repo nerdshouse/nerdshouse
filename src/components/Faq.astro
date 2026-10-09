@@ -1,0 +1,45 @@
+---
+interface Props {
+  items: { q: string; a: string }[];
+  title?: string;
+  id?: string;
+}
+const { items, title = "Questions we get asked", id = "faq" } = Astro.props;
+---
+
+<section class="section s-white" aria-labelledby={`${id}-title`}>
+  <div class="wrap faq-layout">
+    <header>
+      <p class="eyebrow">FAQ</p>
+      <h2 id={`${id}-title`} class="h2" style="margin-top:18px">{title}</h2>
+    </header>
+    <div class="faq">
+      {
+        items.map((it) => (
+          <details>
+            <summary>{it.q}</summary>
+            <div class="faq-a" set:html={it.a} />
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-layout {
+    display: grid;
+    gap: 40px;
+  }
+  @media (min-width: 1000px) {
+    .faq-layout {
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 80px;
+      align-items: start;
+    }
+    header {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+    }
+  }
+</style>

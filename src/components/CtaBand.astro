@@ -1,0 +1,130 @@
+---
+import Icon from "./Icon.astro";
+import { SITE } from "@data/site";
+interface Props {
+  title?: string;
+  lede?: string;
+}
+const {
+  title = "Tell us what's slowing you down.",
+  lede = "A short message is enough. We'll reply with questions, an honest view of whether we're the right fit, and what a first step could look like.",
+} = Astro.props;
+const options = [
+  { t: "Explain a problem", d: "Something in your operations is slow, manual or fragile.", topic: "problem" },
+  { t: "Share a product idea", d: "You want to build a first version and learn from real users.", topic: "product" },
+  { t: "Ask for a technical review", d: "You have a system and need an honest second opinion.", topic: "review" },
+];
+---
+
+<section class="cta s-signal" aria-labelledby="cta-title">
+  <div class="wrap">
+    <div class="cta-grid">
+      <div class="cta-head">
+        <h2 id="cta-title" class="display-l">{title}</h2>
+        <p class="cta-lede">{lede}</p>
+        <p class="cta-direct mono">
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <a href={`tel:${SITE.phoneHref}`}>{SITE.phone}</a>
+        </p>
+      </div>
+      <ul class="cta-opts">
+        {
+          options.map((o) => (
+            <li>
+              <a href={`/contact?topic=${o.topic}`} class="cta-opt">
+                <span class="cta-opt-t">{o.t}</span>
+                <span class="cta-opt-d">{o.d}</span>
+                <Icon name="arrow" class="cta-opt-ico" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-block: clamp(72px, 9vw, 128px);
+  }
+  .cta-grid {
+    display: grid;
+    gap: 40px;
+  }
+  @media (min-width: 1024px) {
+    .cta-grid {
+      grid-template-columns: 1.2fr 1fr;
+      gap: 72px;
+      align-items: end;
+    }
+  }
+  .cta-head {
+    display: grid;
+    gap: 22px;
+  }
+  .cta-lede {
+    font-size: 1.12rem;
+    max-width: 52ch;
+    color: #2a1204;
+  }
+  .cta-direct {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    font-size: 0.9rem;
+  }
+  .cta-direct a {
+    color: var(--ink-0);
+  }
+  .cta-opts {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .cta-opt {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "t i" "d i";
+    gap: 4px 20px;
+    align-items: center;
+    padding: 20px 22px;
+    border-radius: var(--radius);
+    background: var(--ink-0);
+    color: var(--ink-text);
+    text-decoration: none;
+    transition: transform 0.2s var(--ease), background-color 0.2s var(--ease);
+  }
+  .cta-opt:hover {
+    background: var(--ink-2);
+  }
+  .cta-opt:focus-visible {
+    outline-color: var(--ink-0);
+  }
+  .cta-opt-t {
+    grid-area: t;
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+  .cta-opt-d {
+    grid-area: d;
+    color: var(--ink-mute);
+    font-size: 0.92rem;
+  }
+  .cta-opt :global(.cta-opt-ico) {
+    grid-area: i;
+    width: 22px;
+    height: 22px;
+    color: var(--signal);
+    transition: transform 0.2s var(--ease);
+  }
+  .cta-opt:hover :global(.cta-opt-ico) {
+    transform: translateX(4px);
+  }
+  .s-signal :focus-visible {
+    outline-color: var(--ink-0);
+  }
+</style>

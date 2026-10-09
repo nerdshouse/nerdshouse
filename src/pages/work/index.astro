@@ -1,0 +1,260 @@
+---
+import { Image } from "astro:assets";
+import Base from "@layouts/Base.astro";
+import WorkFeature from "@components/WorkFeature.astro";
+import CtaBand from "@components/CtaBand.astro";
+import { PROJECTS, OTHER_CLIENTS } from "@data/work";
+import { CAPABILITIES } from "@data/site";
+
+const featured = PROJECTS.filter((p) => p.detail);
+const more = PROJECTS.filter((p) => !p.detail);
+const capName = (slug: string) => CAPABILITIES.find((c) => c.slug === slug)?.short;
+---
+
+<Base
+  title="Work — Systems, Products and Storefronts We've Built | Nerdshouse"
+  description="Case studies and projects by Nerdshouse: Briyo Supplements' storefront and operations tools, WorkSpaceCo, Vishesh Masala, Goosebumps Arena and more — with real screens."
+  breadcrumbs={[{ name: "Work", path: "/work" }]}
+>
+  <section class="wh s-dark" aria-labelledby="wh-title">
+    <div class="wrap">
+      <p class="eyebrow">Work</p>
+      <h1 id="wh-title" class="display-l wh-title">Real systems.<br /><span class="faint">Real screens.</span></h1>
+      <div class="wh-foot">
+        <p class="lede">
+          Operations software, storefronts and first releases we've designed and built. Screens are real. Where a client hasn't
+          approved sharing results, we describe what the system does instead of inventing numbers.
+        </p>
+        <ul class="wh-index" aria-label="Case studies on this page">
+          {
+            featured.map((p, i) => (
+              <li>
+                <a href={`#${p.slug}`}>
+                  <span class="mono accent">{String(i + 1).padStart(2, "0")}</span> {p.name}
+                </a>
+              </li>
+            ))
+          }
+          <li><a href="#more"><span class="mono accent">+{more.length}</span> More projects</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section s-white" aria-label="Case studies">
+    <div class="wrap feat">
+      {
+        featured.map((p, i) => (
+          <div id={p.slug} class="feat-item">
+            <WorkFeature project={p} flip={i % 2 === 1} headingLevel="h2" />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section s-light" id="more" aria-labelledby="more-title">
+    <div class="wrap">
+      <header class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow">More projects</p>
+          <h2 id="more-title" class="h2" style="margin-top:18px">Storefronts, sites and first releases.</h2>
+        </div>
+        <p class="lede">Project overviews. Full case studies will follow as clients approve what we can share.</p>
+      </header>
+      <ul class="grid">
+        {
+          more.map((p) => (
+            <li class="card">
+              <div class="card-media">
+                {p.hero ? (
+                  <Image src={p.hero.src} alt={p.hero.alt} widths={[400, 640, 900]} sizes="(min-width: 1100px) 420px, (min-width: 700px) 46vw, 92vw" />
+                ) : (
+                  <div class="card-type" aria-hidden="true">
+                    <span>{p.name}</span>
+                  </div>
+                )}
+              </div>
+              <div class="card-body">
+                <p class="mono card-sector">{p.sector}</p>
+                <h3 class="h4">{p.name}</h3>
+                <p class="muted">{p.headline}</p>
+                <p class="mono card-meta">
+                  {p.role.join(" · ")}
+                  {p.stack.length > 0 && <><br /><span class="faint">{p.stack.join(" · ")}</span></>}
+                </p>
+                <p class="card-foot">
+                  <span class="chip">{capName(p.capability)}</span>
+                  {p.liveUrl && (
+                    <a href={p.liveUrl} class="card-live" rel="noopener" target="_blank">
+                      Visit site<span class="sr-only"> (opens in a new tab)</span> ↗
+                    </a>
+                  )}
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="clients">
+        <h3 class="mono clients-h">Other clients listed on our previous site</h3>
+        <ul class="clients-list">{OTHER_CLIENTS.map((c) => <li>{c}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Want to see more?" lede="Some of our best work runs inside other companies and can't be shown publicly. Ask, and we'll walk you through relevant systems on a call, with the client's permission." />
+</Base>
+
+<style>
+  .wh {
+    padding-block: clamp(56px, 8vw, 120px) clamp(48px, 6vw, 88px);
+  }
+  .wh-title {
+    margin-top: 24px;
+  }
+  .wh-foot {
+    display: grid;
+    gap: 32px;
+    margin-top: 36px;
+  }
+  @media (min-width: 1000px) {
+    .wh-foot {
+      grid-template-columns: 1fr auto;
+      gap: 64px;
+      align-items: end;
+    }
+  }
+  .wh-index {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    min-width: 260px;
+    border-top: 1px solid var(--ink-line);
+  }
+  .wh-index a {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ink-line);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .wh-index a:hover {
+    color: var(--signal);
+  }
+  .feat {
+    display: grid;
+    gap: clamp(96px, 11vw, 160px);
+  }
+  .feat-item {
+    scroll-margin-top: calc(var(--header-h) + 32px);
+  }
+  .grid {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+  }
+  @media (min-width: 700px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1100px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .card {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    border-radius: var(--radius-l);
+    border: 1px solid var(--line);
+    background: var(--white);
+    overflow: hidden;
+  }
+  .card-media {
+    aspect-ratio: 16 / 9.5;
+    background: var(--light-1);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .card-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+  .card-type {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(60% 80% at 80% 0%, rgba(255, 106, 43, 0.25), transparent 60%),
+      var(--ink-1);
+    color: var(--ink-text);
+    font-family: var(--font-display);
+    font-weight: 750;
+    font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.4rem);
+    letter-spacing: -0.04em;
+  }
+  .card-body {
+    display: grid;
+    grid-template-rows: auto auto auto 1fr auto;
+    gap: 8px;
+    padding: 22px;
+  }
+  .card-sector {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent-text);
+  }
+  .card-meta {
+    font-size: 0.72rem;
+    color: var(--mute);
+    margin-top: 4px;
+  }
+  .card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .card-live {
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px 0;
+  }
+  .clients {
+    margin-top: clamp(56px, 7vw, 88px);
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 16px;
+  }
+  @media (min-width: 900px) {
+    .clients {
+      grid-template-columns: 260px 1fr;
+      gap: 32px;
+    }
+  }
+  .clients-h {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+    font-weight: 400;
+  }
+  .clients-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    font-size: 1.05rem;
+  }
+</style>

@@ -1,0 +1,311 @@
+---
+import { Image } from "astro:assets";
+import Base from "@layouts/Base.astro";
+import ServiceHero from "@components/ServiceHero.astro";
+import ScopeBoard from "@components/visuals/ScopeBoard.astro";
+import ProductJourney from "@components/visuals/ProductJourney.astro";
+import Fit from "@components/Fit.astro";
+import Faq from "@components/Faq.astro";
+import CtaBand from "@components/CtaBand.astro";
+import Icon from "@components/Icon.astro";
+import { SITE } from "@data/site";
+import { PROJECTS } from "@data/work";
+
+const title = "MVP Development & Product Engineering | Nerdshouse";
+const description =
+  "From idea to a first release real users can use: discovery, scope, UX, architecture, web and mobile builds, launch and the releases after it.";
+
+const service = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "MVP & Product Engineering",
+  serviceType: "MVP and software product development",
+  description,
+  url: `${SITE.url}/mvp-development`,
+  provider: { "@id": `${SITE.url}/#organization` },
+};
+
+const path = [
+  { t: "Discovery", d: "Who it's for, the job they need done, and what v1 must prove.", out: "Problem brief" },
+  { t: "Scope", d: "What goes in v1, what waits, and why — decided together.", out: "Scoping board" },
+  { t: "UX & interface", d: "Flows and screens you can click through before code.", out: "Clickable prototype" },
+  { t: "Architecture", d: "Data model, integrations and hosting chosen for this product, not a template.", out: "Architecture note" },
+  { t: "Build", d: "Working increments on a staging link you can open any time.", out: "Staging link" },
+  { t: "Test & launch", d: "Real devices, real payments in test mode, then a planned release.", out: "Launch checklist" },
+  { t: "Iterate", d: "Watch real use, fix what hurts, build what's next.", out: "Release notes" },
+];
+
+const realFirst = ["workspaceco", "estateos", "axy"].map((s) => PROJECTS.find((p) => p.slug === s)!);
+
+const stack = [
+  { k: "Web apps", v: "TypeScript, React, Next.js" },
+  { k: "Backend & data", v: "Node.js, Postgres (Supabase or Neon), Firebase where real-time matters" },
+  { k: "Commerce", v: "Shopify, checkout and payment-gateway integrations" },
+  { k: "Messaging", v: "WhatsApp Business API, transactional email" },
+  { k: "Hosting", v: "Vercel and managed services — no servers to babysit" },
+];
+
+const faq = [
+  {
+    q: "How long does an MVP take?",
+    a: "<p>It depends on what v1 has to prove — that's why scope comes first. After discovery we give you a plan with stages and what you'll see at each one, rather than a number before we understand the product.</p>",
+  },
+  {
+    q: "Who owns the code?",
+    a: "<p>You do. The code, accounts, domains and data are set up under your ownership, and the handover documentation explains how to run it without us.</p>",
+  },
+  {
+    q: "Can you build mobile apps?",
+    a: "<p>Often the fastest first version is a mobile-first web app that customers open from a link or WhatsApp. When a native app is genuinely needed, we'll plan for it — and tell you when it isn't.</p>",
+  },
+  {
+    q: "We already have a design. Can you just build it?",
+    a: "<p>Yes. We'll still review it against the scope and the architecture, and flag anything that will be expensive to build or hard to change later.</p>",
+  },
+  {
+    q: "What happens after launch?",
+    a: "<p>Most products keep going: fixes, the features you parked, and the things real users ask for. That can continue as an ongoing <a href='/technology-partner'>technology partnership</a>, or we hand over cleanly.</p>",
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={[service]} breadcrumbs={[{ name: "MVP & Product Engineering", path: "/mvp-development" }]}>
+  <ServiceHero
+    index="02"
+    name="MVP & Product Engineering"
+    title="Ship the smallest version that <em>proves the idea.</em>"
+    lede="We help founders and teams turn an idea into a first release real people can use — then keep improving it. The hard part is deciding what v1 is. Try it below."
+    cta={{ label: "Share your product idea", href: "/contact?topic=product" }}
+    secondary={{ label: "See first releases we built", href: "#first-releases" }}
+  >
+    <ScopeBoard />
+  </ServiceHero>
+
+  <section class="section s-light" aria-labelledby="path-title">
+    <div class="wrap">
+      <header class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow">The path</p>
+          <h2 id="path-title" class="h2" style="margin-top:18px">From a rough idea to version 1.3.</h2>
+        </div>
+        <p class="lede">Seven steps, each ending in something you can open. You always know where the product is and what's next.</p>
+      </header>
+      <ol class="path">
+        {
+          path.map((p, i) => (
+            <li class="path-step">
+              <span class="mono path-n">{String(i + 1).padStart(2, "0")}</span>
+              <h3 class="h4">{p.t}</h3>
+              <p class="muted">{p.d}</p>
+              <span class="chip">
+                <span class="dot" data-state="ok" />
+                {p.out}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="path-visual">
+        <ProductJourney />
+      </div>
+    </div>
+  </section>
+
+  <section class="section s-white" id="first-releases" aria-labelledby="fr-title">
+    <div class="wrap">
+      <header class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow">Real first releases</p>
+          <h2 id="fr-title" class="h2" style="margin-top:18px">Products we've taken from idea to live.</h2>
+        </div>
+        <p class="lede">Screens from products we designed and built. Details and outcomes are shared case by case, with each client's permission.</p>
+      </header>
+      <ul class="fr-grid">
+        {
+          realFirst.map((p) => (
+            <li class="fr">
+              <div class="browser">
+                <div class="browser__bar">
+                  <span class="browser__dots">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span class="browser__url">{p.hero!.url}</span>
+                </div>
+                <Image src={p.hero!.src} alt={p.hero!.alt} widths={[400, 640, 900]} sizes="(min-width: 1000px) 420px, 92vw" />
+              </div>
+              <p class="mono fr-client">{p.name} · <span class="faint">{p.sector}</span></p>
+              <h3 class="h4">{p.headline}</h3>
+              {p.detail ? (
+                <a href={`/work/${p.slug}`} class="link-arrow">
+                  Case study <Icon name="arrow" />
+                </a>
+              ) : (
+                <p class="muted fr-role">{p.role.join(" · ")}</p>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section s-dark-2" aria-labelledby="stack-title">
+    <div class="wrap stack-grid">
+      <header>
+        <p class="eyebrow">Technical choices</p>
+        <h2 id="stack-title" class="h2" style="margin-top:18px">Boring where it should be.</h2>
+        <p class="lede" style="margin-top:20px">
+          Proven tools that many engineers can pick up, so your product never depends on us. We choose per project; this is what we
+          use most.
+        </p>
+      </header>
+      <dl class="stack">
+        {
+          stack.map((s) => (
+            <div>
+              <dt class="mono">{s.k}</dt>
+              <dd>{s.v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <Fit
+    good={[
+      "You know the customer and the problem, and want to test the solution with real users",
+      "You can make decisions quickly about what goes in and what waits",
+      "You want to own the code and keep building after launch",
+      "You value a smaller v1 that works over a larger one that's late",
+    ]}
+    bad={[
+      "You need a fixed price for a feature list that isn't settled yet",
+      "You want every idea in the first release",
+      "You're looking for the cheapest possible build",
+      "There's nobody on your side to answer product questions",
+    ]}
+  />
+  <Faq items={faq} />
+  <CtaBand title="What should v1 prove?" lede="Send us the idea in a few lines. We'll come back with questions and a view on what the first release could be." />
+</Base>
+
+<style>
+  .path {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+  @media (min-width: 720px) {
+    .path {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 24px;
+    }
+  }
+  @media (min-width: 1200px) {
+    .path {
+      grid-template-columns: repeat(7, 1fr);
+      column-gap: 16px;
+    }
+  }
+  .path-step {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 8px;
+    padding: 20px 0;
+    border-top: 2px solid var(--line);
+  }
+  .path-step:last-child {
+    border-top-color: var(--signal);
+  }
+  .path-n {
+    color: var(--accent-text);
+  }
+  .path-step .muted {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .path-step .chip {
+    width: fit-content;
+    color: var(--text);
+    background: var(--panel);
+  }
+  .path-visual {
+    margin-top: clamp(48px, 6vw, 80px);
+    max-width: 760px;
+  }
+  .fr-grid {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 40px 24px;
+  }
+  @media (min-width: 1000px) {
+    .fr-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .fr {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+  }
+  .fr :global(img) {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+  }
+  .fr-client {
+    color: var(--accent-text);
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+  }
+  .fr .link-arrow {
+    justify-self: start;
+  }
+  .fr-role {
+    font-size: 0.9rem;
+  }
+  .stack-grid {
+    display: grid;
+    gap: 48px;
+  }
+  @media (min-width: 1000px) {
+    .stack-grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 80px;
+    }
+  }
+  .stack {
+    display: grid;
+    border-top: 1px solid var(--ink-line);
+  }
+  .stack div {
+    display: grid;
+    gap: 6px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--ink-line);
+  }
+  @media (min-width: 640px) {
+    .stack div {
+      grid-template-columns: 180px 1fr;
+      gap: 24px;
+    }
+  }
+  .stack dt {
+    color: var(--signal);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    padding-top: 4px;
+  }
+  .stack dd {
+    font-size: 1.08rem;
+  }
+</style>

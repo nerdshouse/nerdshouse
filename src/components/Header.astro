@@ -1,0 +1,378 @@
+---
+import Wordmark from "./Wordmark.astro";
+import Icon from "./Icon.astro";
+import { CAPABILITIES, SITE } from "@data/site";
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isCap = CAPABILITIES.some((c) => path === `/${c.slug}`);
+const current = (href: string) => (path === href || (href !== "/" && path.startsWith(href + "/")) ? "page" : undefined);
+---
+
+<header class="site-header s-dark" data-header>
+  <div class="wrap hdr">
+    <a href="/" class="hdr-logo" aria-label="Nerdshouse — home">
+      <Wordmark size="s" live />
+    </a>
+
+    <nav class="hdr-nav" aria-label="Main">
+      <ul class="hdr-list">
+        <li class="hdr-cap">
+          <a href="/#capabilities" class="hdr-link" aria-current={isCap ? "true" : undefined}>Capabilities</a>
+          <button class="hdr-cap-btn" type="button" aria-expanded="false" aria-controls="cap-panel" data-cap-toggle>
+            <Icon name="chevron" />
+            <span class="sr-only">Show capabilities</span>
+          </button>
+          <div class="cap-panel" id="cap-panel" hidden data-cap-panel>
+            <ul class="cap-grid">
+              {
+                CAPABILITIES.map((c) => (
+                  <li>
+                    <a href={`/${c.slug}`} class="cap-item" aria-current={current(`/${c.slug}`)}>
+                      <span class="mono cap-idx">{c.index}</span>
+                      <span class="cap-name">{c.short}</span>
+                      <span class="cap-sum">{c.summary}</span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </li>
+        <li><a href="/work" class="hdr-link" aria-current={current("/work")}>Work</a></li>
+        <li><a href="/about" class="hdr-link" aria-current={current("/about")}>About</a></li>
+      </ul>
+    </nav>
+
+    <div class="hdr-actions">
+      <a href="/contact" class="btn btn--primary btn--sm hdr-cta">Start a conversation</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
+        <span class="menu-ico menu-ico--open"><Icon name="menu" /></span>
+        <span class="menu-ico menu-ico--close"><Icon name="close" /></span>
+        <span class="menu-label">Menu</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" data-mobile-menu>
+    <nav class="wrap mm-inner" aria-label="Mobile">
+      <p class="eyebrow eyebrow--plain">Capabilities</p>
+      <ul class="mm-caps">
+        {
+          CAPABILITIES.map((c) => (
+            <li>
+              <a href={`/${c.slug}`} aria-current={current(`/${c.slug}`)}>
+                <span class="mono">{c.index}</span>
+                {c.short}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="mm-main">
+        <li><a href="/work" aria-current={current("/work")}>Work</a></li>
+        <li><a href="/about" aria-current={current("/about")}>About</a></li>
+        <li><a href="/contact" aria-current={current("/contact")}>Contact</a></li>
+      </ul>
+      <a href="/contact" class="btn btn--primary mm-cta">Start a conversation <Icon name="arrow" /></a>
+      <p class="mm-contact mono">
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a><br />
+        <a href={`tel:${SITE.phoneHref}`}>{SITE.phone}</a>
+      </p>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    isolation: isolate;
+    background: transparent;
+    border-bottom: 1px solid var(--ink-line-soft);
+  }
+  /* Blur lives on a pseudo-element: backdrop-filter on the header itself would become the
+     containing block for the fixed mobile menu and trap it inside the 64px bar. */
+  .site-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(8, 9, 12, 0.82);
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
+  }
+  .hdr {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .hdr-logo {
+    text-decoration: none;
+    color: var(--ink-text);
+    display: inline-flex;
+    padding: 6px 0;
+  }
+  .hdr-nav {
+    margin-left: auto;
+  }
+  .hdr-list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .hdr-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 12px;
+    color: var(--ink-mute);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    transition: color 0.2s var(--ease);
+  }
+  .hdr-link:hover,
+  .hdr-link[aria-current] {
+    color: var(--ink-text);
+  }
+  .hdr-link[aria-current]::after {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--signal);
+    margin-left: 7px;
+  }
+  .hdr-cap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .hdr-cap .hdr-link {
+    padding-right: 2px;
+  }
+  .hdr-cap-btn {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--ink-mute);
+    border-radius: 8px;
+  }
+  .hdr-cap-btn:hover {
+    color: var(--ink-text);
+  }
+  .hdr-cap-btn :global(svg) {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s var(--ease);
+  }
+  .hdr-cap-btn[aria-expanded="true"] :global(svg) {
+    transform: rotate(180deg);
+  }
+  .cap-panel {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: -12px;
+    width: min(680px, 80vw);
+    background: var(--ink-1);
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-l);
+    padding: 10px;
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.7);
+  }
+  .cap-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  .cap-item {
+    display: grid;
+    gap: 4px;
+    padding: 16px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--ink-text);
+    transition: background-color 0.2s var(--ease);
+  }
+  .cap-item:hover,
+  .cap-item[aria-current] {
+    background: var(--ink-2);
+  }
+  .cap-idx {
+    color: var(--signal);
+    font-size: 0.72rem;
+  }
+  .cap-name {
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-size: 1.08rem;
+    letter-spacing: -0.015em;
+  }
+  .cap-sum {
+    font-size: 0.86rem;
+    color: var(--ink-mute);
+    line-height: 1.45;
+  }
+  .hdr-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .menu-btn {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--ink-line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink-text);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .menu-ico :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+  .menu-ico--close {
+    display: none;
+  }
+  .menu-btn[aria-expanded="true"] .menu-ico--open {
+    display: none;
+  }
+  .menu-btn[aria-expanded="true"] .menu-ico--close {
+    display: inline;
+  }
+  .mobile-menu {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .hdr-nav,
+    .hdr-cta {
+      display: none;
+    }
+    .hdr-actions {
+      margin-left: auto;
+    }
+    :global(.js) .menu-btn {
+      display: inline-flex;
+    }
+    :global(.js) .mobile-menu {
+      position: fixed;
+      inset: var(--header-h) 0 0 0;
+      background: var(--ink-0);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    :global(.js) .mobile-menu.is-open {
+      display: block;
+    }
+    /* Without JS, the mobile nav renders inline under the header */
+    :global(html:not(.js)) .mobile-menu {
+      display: block;
+      border-top: 1px solid var(--ink-line-soft);
+    }
+    .mm-inner {
+      padding-block: 28px 40px;
+      display: grid;
+      gap: 24px;
+    }
+    .mm-caps,
+    .mm-main {
+      display: grid;
+    }
+    .mm-caps a {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--ink-line-soft);
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+    }
+    .mm-caps .mono {
+      color: var(--signal);
+      font-size: 0.75rem;
+    }
+    .mm-main a {
+      display: block;
+      padding: 10px 0;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--ink-mute);
+      text-decoration: none;
+    }
+    .mm-caps a[aria-current],
+    .mm-main a[aria-current] {
+      color: var(--signal);
+    }
+    .mm-cta {
+      width: 100%;
+    }
+    .mm-contact {
+      color: var(--ink-mute);
+      line-height: 2;
+    }
+  }
+  @media (max-width: 380px) {
+    .menu-label {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const capBtn = document.querySelector<HTMLButtonElement>("[data-cap-toggle]");
+  const capPanel = document.querySelector<HTMLElement>("[data-cap-panel]");
+  const capWrap = capBtn?.closest("li");
+
+  const setCap = (open: boolean) => {
+    if (!capBtn || !capPanel) return;
+    capBtn.setAttribute("aria-expanded", String(open));
+    capPanel.hidden = !open;
+  };
+  capBtn?.addEventListener("click", () => setCap(capBtn.getAttribute("aria-expanded") !== "true"));
+  document.addEventListener("click", (e) => {
+    if (capWrap && !capWrap.contains(e.target as Node)) setCap(false);
+  });
+  capWrap?.addEventListener("focusout", (e) => {
+    if (!capWrap.contains((e as FocusEvent).relatedTarget as Node)) setCap(false);
+  });
+
+  const menuBtn = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const menu = document.querySelector<HTMLElement>("[data-mobile-menu]");
+  const setMenu = (open: boolean, restoreFocus = false) => {
+    if (!menuBtn || !menu) return;
+    menuBtn.setAttribute("aria-expanded", String(open));
+    menuBtn.querySelector(".menu-label")!.textContent = open ? "Close" : "Menu";
+    menu.classList.toggle("is-open", open);
+    document.body.style.overflow = open ? "hidden" : "";
+    document.querySelectorAll<HTMLElement>("main, footer").forEach((el) => (el.inert = open));
+    if (open) menu.querySelector<HTMLElement>("a")?.focus();
+    if (!open && restoreFocus) menuBtn.focus();
+  };
+  menuBtn?.addEventListener("click", () => setMenu(menuBtn.getAttribute("aria-expanded") !== "true"));
+  menu?.addEventListener("click", (e) => {
+    if ((e.target as HTMLElement).closest("a")) setMenu(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (capBtn?.getAttribute("aria-expanded") === "true") {
+      setCap(false);
+      capBtn.focus();
+    }
+    if (menuBtn?.getAttribute("aria-expanded") === "true") setMenu(false, true);
+  });
+  window.matchMedia("(min-width: 901px)").addEventListener("change", (m) => m.matches && setMenu(false));
+</script>

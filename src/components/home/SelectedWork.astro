@@ -1,0 +1,44 @@
+---
+import WorkFeature from "../WorkFeature.astro";
+import Icon from "../Icon.astro";
+import { PROJECTS } from "@data/work";
+const featured = ["briyo-supplements", "workspaceco", "vishesh-masala"].map((s) => PROJECTS.find((p) => p.slug === s)!);
+---
+
+<section class="work s-white section" aria-labelledby="work-title">
+  <div class="wrap">
+    <header class="sec-head sec-head--split">
+      <div>
+        <p class="eyebrow">Selected work</p>
+        <h2 id="work-title" class="h2" style="margin-top:18px">Systems in production, not concepts.</h2>
+      </div>
+      <p class="lede">
+        Real screens from real clients. Where we can't share numbers yet, we say so — and tell you what the system does instead.
+      </p>
+    </header>
+    <div class="work-list">
+      {featured.map((p, i) => <WorkFeature project={p} flip={i % 2 === 1} />)}
+    </div>
+    <div class="work-more">
+      <p class="muted">Also: Goosebumps Arena, Sarvati, EstateOS, AXY and more.</p>
+      <a href="/work" class="btn btn--ghost">All work <Icon name="arrow" /></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .work-list {
+    display: grid;
+    gap: clamp(88px, 10vw, 150px);
+  }
+  .work-more {
+    margin-top: clamp(72px, 8vw, 112px);
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+</style>

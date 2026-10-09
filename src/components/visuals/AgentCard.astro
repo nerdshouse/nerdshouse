@@ -1,0 +1,239 @@
+---
+// Interactive: an agent's permission scope + a pending approval the visitor can resolve.
+interface Props {
+  compact?: boolean;
+  id?: string; // must be unique per page; deterministic so builds are reproducible
+}
+const { compact = false, id = "agent-demo" } = Astro.props;
+const perms = [
+  { tool: "orders.read", access: "Allowed", state: "ok", note: "Read-only" },
+  { tool: "customers.read", access: "Allowed", state: "ok", note: "Phone numbers masked" },
+  { tool: "email.send", access: "Allowed", state: "ok", note: "Approved templates only" },
+  { tool: "replacement.create", access: "Needs approval", state: "wait", note: "A person decides" },
+  { tool: "refund.issue", access: "Blocked", state: "fail", note: "People only" },
+];
+const uid = id;
+---
+
+<div class:list={["agent s-dark", compact && "agent--compact"]} data-agent>
+  <div class="ag-head">
+    <span class="mono ag-name"><span class="dot" data-state="run"></span> agent: support-triage</span>
+    <span class="label-illustrative">Illustrative</span>
+  </div>
+
+  <div class="ag-perms">
+    <p class="ag-h mono">What it is allowed to do</p>
+    <table>
+      <caption class="sr-only">Tool permissions for the support agent</caption>
+      <thead class="sr-only">
+        <tr><th scope="col">Tool</th><th scope="col">Access</th><th scope="col">Rule</th></tr>
+      </thead>
+      <tbody>
+        {
+          perms.map((p) => (
+            <tr data-state={p.state}>
+              <th scope="row" class="mono">{p.tool}</th>
+              <td>
+                <span class="acc" data-state={p.state}>
+                  <span class="dot" />
+                  {p.access}
+                </span>
+              </td>
+              <td class="ag-note">{p.note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ag-approval" data-approval>
+    <p class="ag-h mono"><span class="dot" data-state="wait" data-ap-dot></span> <span data-ap-title>Waiting for your approval</span></p>
+    <p class="ag-prop"><strong>Create a replacement</strong> for order #NH-20418 — 1 × item reported damaged on delivery.</p>
+    <p class="ag-why muted">Why: photo attached by customer · delivered 2 days ago · first claim on this account.</p>
+    <div class="ag-actions" data-ap-actions>
+      <button type="button" class="ag-btn ag-btn--yes" data-ap="approve" aria-describedby={`${uid}-hint`}>Approve</button>
+      <button type="button" class="ag-btn" data-ap="reject" aria-describedby={`${uid}-hint`}>Reject</button>
+    </div>
+    <p id={`${uid}-hint`} class="sr-only">Try it: this is a demonstration, nothing is sent.</p>
+    <p class="ag-result mono" role="status" aria-live="polite" data-ap-result></p>
+  </div>
+</div>
+
+<style>
+  .agent {
+    border-radius: var(--radius-l);
+    border: 1px solid var(--ink-line);
+    background: var(--ink-1);
+    padding: clamp(16px, 2.2vw, 24px);
+    display: grid;
+    gap: 18px;
+    color: var(--ink-text);
+  }
+  .ag-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .ag-name {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    color: var(--ink-text);
+  }
+  .ag-h {
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.68rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+  }
+  tr {
+    border-top: 1px solid var(--ink-line-soft);
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 9px 8px 9px 0;
+    vertical-align: middle;
+    font-weight: 400;
+  }
+  th.mono {
+    font-size: 0.78rem;
+    color: var(--ink-text);
+  }
+  .acc {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+  .acc[data-state="ok"] {
+    color: var(--ok);
+  }
+  .acc[data-state="wait"] {
+    color: var(--wait);
+  }
+  .acc[data-state="fail"] {
+    color: var(--fail);
+  }
+  .ag-note {
+    color: var(--ink-mute);
+  }
+  .ag-approval {
+    border: 1px solid rgba(255, 194, 61, 0.35);
+    background: rgba(255, 194, 61, 0.05);
+    border-radius: var(--radius);
+    padding: 16px;
+    transition: border-color 0.3s var(--ease), background-color 0.3s var(--ease);
+  }
+  .ag-approval[data-done="approve"] {
+    border-color: rgba(61, 220, 151, 0.4);
+    background: rgba(61, 220, 151, 0.05);
+  }
+  .ag-approval[data-done="reject"] {
+    border-color: var(--ink-line);
+    background: transparent;
+  }
+  .ag-prop {
+    font-size: 0.98rem;
+  }
+  .ag-why {
+    font-size: 0.86rem;
+    margin-top: 4px;
+    color: var(--ink-mute);
+  }
+  .ag-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .ag-btn {
+    min-height: 40px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--ink-line);
+    background: transparent;
+    color: var(--ink-text);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .ag-btn:hover {
+    border-color: var(--ink-mute);
+  }
+  .ag-btn--yes {
+    background: var(--ok);
+    border-color: var(--ok);
+    color: var(--ink-0);
+  }
+  .ag-btn--yes:hover {
+    filter: brightness(1.08);
+  }
+  .ag-result {
+    margin-top: 10px;
+    color: var(--ink-mute);
+    font-size: 0.76rem;
+    min-height: 1.2em;
+  }
+  .agent--compact table {
+    font-size: 0.82rem;
+  }
+  @media (max-width: 480px) {
+    .ag-note {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-agent]").forEach((root) => {
+    const box = root.querySelector<HTMLElement>("[data-approval]")!;
+    const title = root.querySelector<HTMLElement>("[data-ap-title]")!;
+    const dot = root.querySelector<HTMLElement>("[data-ap-dot]")!;
+    const result = root.querySelector<HTMLElement>("[data-ap-result]")!;
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-ap]")];
+    const [yes, no] = buttons;
+    const reset = yes.cloneNode() as HTMLButtonElement;
+    reset.className = "ag-btn";
+    reset.dataset.ap = "reset";
+    reset.textContent = "Reset demo";
+    reset.removeAttribute("aria-describedby");
+    reset.hidden = true;
+    no.after(reset);
+
+    const decide = (choice: string) => {
+      const t = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+      if (choice === "reset") {
+        delete box.dataset.done;
+        dot.dataset.state = "wait";
+        title.textContent = "Waiting for your approval";
+        result.textContent = "";
+        yes.hidden = no.hidden = false;
+        reset.hidden = true;
+        yes.focus();
+        return;
+      }
+      box.dataset.done = choice;
+      dot.dataset.state = choice === "approve" ? "ok" : "fail";
+      title.textContent = choice === "approve" ? "Approved" : "Rejected";
+      result.textContent =
+        choice === "approve"
+          ? `${t} approved by you → replacement created → reply sent → trace saved`
+          : `${t} rejected by you → nothing changed → ticket back in the support queue`;
+      yes.hidden = no.hidden = true;
+      reset.hidden = false;
+      reset.focus();
+    };
+    [yes, no, reset].forEach((b) => b.addEventListener("click", () => decide(b.dataset.ap!)));
+  });
+</script>

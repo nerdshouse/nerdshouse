@@ -1,0 +1,184 @@
+---
+import AgentCard from "../visuals/AgentCard.astro";
+import ProductJourney from "../visuals/ProductJourney.astro";
+import SpreadsheetToSystem from "../visuals/SpreadsheetToSystem.astro";
+import DecisionLog from "../visuals/DecisionLog.astro";
+import Icon from "../Icon.astro";
+
+const stories = [
+  {
+    idx: "01",
+    slug: "ai-agent-engineering",
+    name: "AI & Agentic Engineering",
+    title: "AI that works inside your tools, and knows when to ask.",
+    problem: "Your team copies information between inboxes, order systems and spreadsheets all day. A chatbot demo doesn't fix that.",
+    build: ["Agents connected to your real systems and APIs", "Retrieval over your own documents and data", "Approvals for actions that change money, stock or customers"],
+    holds: "Every tool has a written permission. Every action is logged. Failures go to a person, not into silence.",
+    visual: "agent",
+  },
+  {
+    idx: "02",
+    slug: "mvp-development",
+    name: "MVP & Product Engineering",
+    title: "From a rough idea to a first release people actually use.",
+    problem: "You know the problem and the customer. You need a product that is small enough to ship and solid enough to grow.",
+    build: ["Scope that decides what v1 must prove", "Design, web and mobile apps, backend and payments", "A launch, then steady releases"],
+    holds: "Clean architecture from the first commit, release notes for every version, and code you own outright.",
+    visual: "journey",
+  },
+  {
+    idx: "03",
+    slug: "custom-software-development",
+    name: "Custom Business Systems",
+    title: "Retire the spreadsheet your business quietly runs on.",
+    problem: "Bookings in one place, payments in another, follow-ups in WhatsApp. Nobody is sure which number is right.",
+    build: ["Internal tools, dashboards and portals", "Integrations with payments, messaging and your store", "Roles, approvals and audit history"],
+    holds: "One source of truth, built around how your team already works — not a generic tool they have to work around.",
+    visual: "systems",
+  },
+  {
+    idx: "04",
+    slug: "technology-partner",
+    name: "Technology Partnership",
+    title: "A senior engineering team that stays after launch.",
+    problem: "You have shipped something, and now every decision — fix, rebuild, buy, hire — needs a technical opinion you can trust.",
+    build: ["Roadmap and architecture decisions, written down", "Steady delivery capacity on your systems", "Maintenance, reliability and technical-debt work"],
+    holds: "A monthly record of what shipped, what was decided and why, so nothing depends on one person's memory.",
+    visual: "log",
+  },
+];
+---
+
+<section class="caps s-light section" id="capabilities" aria-labelledby="caps-title">
+  <div class="wrap">
+    <header class="sec-head sec-head--split">
+      <div>
+        <p class="eyebrow">What we build</p>
+        <h2 id="caps-title" class="h2" style="margin-top:18px">Four kinds of problem. One engineering standard.</h2>
+      </div>
+      <p class="lede">
+        Most of our work falls into one of these. Many projects start in one and grow into another — a booking site becomes an
+        operations suite, an MVP becomes a partnership.
+      </p>
+    </header>
+
+    <div class="stories">
+      {
+        stories.map((s, i) => (
+          <article class:list={["story", i % 2 === 1 && "story--flip"]} aria-labelledby={`cap-${s.slug}`} data-reveal>
+            <div class="story-text">
+              <p class="story-idx mono">
+                <span>{s.idx}</span> {s.name}
+              </p>
+              <h3 id={`cap-${s.slug}`} class="h3 story-title">
+                {s.title}
+              </h3>
+              <dl class="story-dl">
+                <div>
+                  <dt class="mono">The problem</dt>
+                  <dd>{s.problem}</dd>
+                </div>
+                <div>
+                  <dt class="mono">What we build</dt>
+                  <dd>
+                    <ul class="story-list">
+                      {s.build.map((b) => (
+                        <li>{b}</li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+                <div>
+                  <dt class="mono">Why it holds up</dt>
+                  <dd>{s.holds}</dd>
+                </div>
+              </dl>
+              <a href={`/${s.slug}`} class="link-arrow">
+                {s.name} in detail <Icon name="arrow" />
+              </a>
+            </div>
+            <div class="story-visual">
+              {s.visual === "agent" && <AgentCard />}
+              {s.visual === "journey" && <ProductJourney />}
+              {s.visual === "systems" && <SpreadsheetToSystem />}
+              {s.visual === "log" && <DecisionLog />}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .stories {
+    display: grid;
+    gap: clamp(72px, 9vw, 128px);
+  }
+  .story {
+    display: grid;
+    gap: 36px;
+    align-items: center;
+  }
+  @media (min-width: 1024px) {
+    .story {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(48px, 6vw, 96px);
+    }
+    .story--flip .story-text {
+      order: 2;
+    }
+  }
+  .story-text {
+    display: grid;
+    gap: 22px;
+    align-content: start;
+  }
+  .story-idx {
+    color: var(--mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+  }
+  .story-idx span {
+    color: var(--accent-text);
+    margin-right: 6px;
+  }
+  .story-title {
+    font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.75rem);
+  }
+  .story-dl {
+    display: grid;
+    gap: 16px;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .story-dl dt {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+    margin-bottom: 4px;
+  }
+  .story-dl dd {
+    color: var(--text);
+  }
+  .story-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .story-list li {
+    display: flex;
+    gap: 10px;
+  }
+  .story-list li::before {
+    content: "→";
+    color: var(--accent-text);
+    flex: none;
+  }
+  .story-text .link-arrow {
+    justify-self: start;
+  }
+</style>

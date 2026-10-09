@@ -1,44 +1,534 @@
 ---
-import { Icon } from "astro-icon";
-import Layout from "@layouts/Layout.astro";
-import Container from "@components/container.astro";
-import Sectionhead from "@components/sectionhead.astro";
-import Button from "@components/ui/button.astro";
-import Contactform from "@components/contactform.astro";
+import Base from "@layouts/Base.astro";
+import Icon from "@components/Icon.astro";
+import { SITE } from "@data/site";
+
+// Web3Forms access keys are public by design (they ship in the page). The key is read from the
+// environment so the form never posts to an inbox nobody has verified. Without a key, the form
+// hands the message to the visitor's own email app, addressed to SITE.email.
+// Set PUBLIC_WEB3FORMS_KEY only after confirming in the Web3Forms dashboard that the key delivers
+// to SITE.email, and enable the dashboard's domain restriction for nerdshouse.com.
+const WEB3FORMS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
+const mode = WEB3FORMS_KEY ? "web3forms" : "email";
+// Stays false until a real test submission has been received at SITE.email (see private/launch/CONTACT_FORM_MIGRATION.md).
+const formVerified = import.meta.env.PUBLIC_FORM_VERIFIED === "true";
+
+const topics = [
+  { v: "problem", t: "A problem in our operations" },
+  { v: "product", t: "A new product or MVP" },
+  { v: "ai", t: "An AI workflow" },
+  { v: "review", t: "A technical review" },
+  { v: "other", t: "Something else" },
+];
+
+const contactLd = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: "Contact Nerdshouse",
+  url: `${SITE.url}/contact`,
+  mainEntity: { "@id": `${SITE.url}/#organization` },
+};
 ---
 
-<Layout title="Contact | Nerdshouse Technologies">
-  <Container>
-    <Sectionhead>
-      <Fragment slot="title">Contact</Fragment>
-      <Fragment slot="desc">We are a here to help.</Fragment>
-    </Sectionhead>
-
-    <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-16">
-      <div>
-        <h2 class="font-medium text-2xl text-gray-800">Contact Nerd's House</h2>
-        <p class="text-lg leading-relaxed text-slate-500 mt-3">
-          Have something to say? We are here to help. Fill up the form or send
-          email or call phone.
+<Base
+  title="Contact Nerdshouse — Start a Conversation About Your Project"
+  description="Tell Nerdshouse about a problem, a product idea or a system you want reviewed. Email nerd@nerdshouse.com, call +91 99097 09080, or use the short form."
+  jsonLd={[contactLd]}
+  breadcrumbs={[{ name: "Contact", path: "/contact" }]}
+>
+  <section class="ct s-dark" aria-labelledby="ct-title">
+    <div class="wrap ct-grid">
+      <div class="ct-intro">
+        <p class="eyebrow">Contact</p>
+        <h1 id="ct-title" class="display-l ct-title">Start with the problem.</h1>
+        <p class="lede">
+          A few sentences is enough. We read every message ourselves and reply with questions, an honest view of fit, and what a
+          first step could look like.
         </p>
-        <div class="mt-5">
-          <div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:map-marker" />
-            <span>Surat | Delhi | Bengaluru</span>
-          </div><div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:envelope" /><a
-              href="mailto:nerd@nerdshouse.com">nerd@nerdshouse.com</a
-            >
-          </div><div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:phone" /><a
-              href="tel:+1 (987) 4587 899">+91 (990) 9709 080</a
-            >
-          </div>
+
+        <ul class="direct">
+          <li>
+            <Icon name="mail" />
+            <div><span class="mono faint">Email</span><a href={`mailto:${SITE.email}`}>{SITE.email}</a></div>
+          </li>
+          <li>
+            <Icon name="phone" />
+            <div><span class="mono faint">Phone</span><a href={`tel:${SITE.phoneHref}`}>{SITE.phone}</a></div>
+          </li>
+          <li>
+            <Icon name="pin" />
+            <div><span class="mono faint">Based in</span><span>{SITE.locality}, {SITE.region}, India</span></div>
+          </li>
+        </ul>
+
+        <div class="next">
+          <p class="mono next-h">What happens next</p>
+          <ol>
+            <li><span class="mono accent">01</span> We reply to your message, usually with a few questions.</li>
+            <li><span class="mono accent">02</span> A call to understand the problem and constraints.</li>
+            <li><span class="mono accent">03</span> A written view: what we'd do first, and whether we're the right fit.</li>
+          </ol>
         </div>
       </div>
-      <div>
-        <Contactform />
+
+      <div class="ct-form-wrap">
+        {
+          !formVerified && (
+            <p class="unverified" role="note">
+              <span class="dot" data-state="wait" />
+              {mode === "email"
+                ? "Form delivery isn't set up yet. Submitting opens your email app with your message ready to send."
+                : "Form delivery is being verified. If it's urgent, email us directly as well."}{" "}
+              <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+            </p>
+          )
+        }
+        <form
+          class="form"
+          action={mode === "web3forms" ? "https://api.web3forms.com/submit" : `mailto:${SITE.email}`}
+          method="POST"
+          enctype={mode === "email" ? "text/plain" : undefined}
+          novalidate
+          data-form
+          data-mode={mode}
+        >
+          {mode === "web3forms" && <input type="hidden" name="access_key" value={WEB3FORMS_KEY} />}
+          <input type="hidden" name="subject" value="New enquiry from nerdshouse.com" />
+          <input type="hidden" name="from_name" value="nerdshouse.com" />
+          <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
+
+          <div class="err-summary" role="alert" tabindex="-1" hidden data-err-summary></div>
+
+          <fieldset class="field">
+            <legend class="label">What would you like to talk about?</legend>
+            <div class="topics">
+              {
+                topics.map((t, i) => (
+                  <label class="topic">
+                    <input type="radio" name="topic" value={t.v} checked={i === 0} />
+                    <span>{t.t}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="row2">
+            <div class="field">
+              <label class="label" for="f-name">Your name <span class="req">required</span></label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name" />
+              <p class="err" id="e-name" hidden>Please tell us your name.</p>
+            </div>
+            <div class="field">
+              <label class="label" for="f-email">Work email <span class="req">required</span></label>
+              <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="e-email" />
+              <p class="err" id="e-email" hidden>Please enter an email address we can reply to, like name@company.com.</p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="f-company">Company or project <span class="opt">optional</span></label>
+            <input id="f-company" name="company" type="text" autocomplete="organization" />
+          </div>
+
+          <div class="field">
+            <label class="label" for="f-msg">What needs to be built or solved? <span class="req">required</span></label>
+            <p class="hint" id="h-msg">What happens today, what's going wrong, and what “better” would look like.</p>
+            <textarea id="f-msg" name="message" rows="6" required aria-describedby="h-msg e-msg"></textarea>
+            <p class="err" id="e-msg" hidden>Please add a sentence or two about what you need.</p>
+          </div>
+
+          <div class="field">
+            <label class="label" for="f-when">Timeline or budget, if you know it <span class="opt">optional</span></label>
+            <input id="f-when" name="timeline_budget" type="text" />
+          </div>
+
+          <div class="submit-row">
+            <button type="submit" class="btn btn--primary" data-submit>{mode === "email" ? "Write the email" : "Send message"} <Icon name="arrow" /></button>
+            <p class="small faint">We use your details only to reply. <a href="/privacy-policy">Privacy policy</a></p>
+          </div>
+          <div class="status" role="status" aria-live="polite" data-status></div>
+        </form>
       </div>
     </div>
-  </Container>
-</Layout>
+  </section>
+</Base>
+
+<style>
+  .ct {
+    padding-block: clamp(48px, 7vw, 104px);
+  }
+  .ct-grid {
+    display: grid;
+    gap: 56px;
+  }
+  @media (min-width: 1100px) {
+    .ct-grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 88px;
+      align-items: start;
+    }
+  }
+  .ct-intro {
+    display: grid;
+    gap: 28px;
+    align-content: start;
+  }
+  .ct-title {
+    margin-top: -4px;
+  }
+  .direct {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .direct li {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .direct :global(svg) {
+    width: 20px;
+    height: 20px;
+    color: var(--signal);
+    flex: none;
+  }
+  .direct div {
+    display: grid;
+  }
+  .direct .mono {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .direct a {
+    font-size: 1.1rem;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .direct a:hover {
+    color: var(--signal);
+  }
+  .next {
+    padding: 20px;
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-l);
+  }
+  .next-h {
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+    margin-bottom: 12px;
+  }
+  .next ol {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .next li {
+    display: flex;
+    gap: 12px;
+    color: var(--ink-mute);
+  }
+
+  .ct-form-wrap {
+    background: var(--white);
+    color: var(--light-text);
+    border-radius: var(--radius-l);
+    padding: clamp(20px, 3.5vw, 40px);
+    --line: var(--light-line);
+    --mute: var(--light-mute);
+    --faint: #5d6571;
+    --text: var(--light-text);
+  }
+  .form {
+    display: grid;
+    gap: 22px;
+  }
+  .unverified {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin-bottom: 22px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #fff8e6;
+    border: 1px solid rgba(138, 90, 0, 0.35);
+    color: var(--wait-ink);
+    font-size: 0.9rem;
+  }
+  .unverified a {
+    color: var(--light-text);
+    font-weight: 600;
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+  }
+  .row2 {
+    display: grid;
+    gap: 22px;
+  }
+  @media (min-width: 640px) {
+    .row2 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .field {
+    display: grid;
+    gap: 8px;
+  }
+  .label {
+    font-weight: 600;
+    font-size: 0.98rem;
+    padding: 0;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .req,
+  .opt {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 400;
+    color: var(--light-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .hint {
+    font-size: 0.88rem;
+    color: var(--light-mute);
+    margin-top: -4px;
+  }
+  input[type="text"],
+  input[type="email"],
+  textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--light-line);
+    background: var(--light-1);
+    color: var(--light-text);
+    font-size: 1rem;
+    transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease);
+  }
+  textarea {
+    resize: vertical;
+    line-height: 1.5;
+  }
+  input:hover,
+  textarea:hover {
+    border-color: #aab1bb;
+  }
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--signal);
+    outline-offset: 1px;
+    border-color: var(--light-text);
+    background: var(--white);
+  }
+  [aria-invalid="true"] {
+    border-color: var(--fail-ink) !important;
+    background: #fff5f7 !important;
+  }
+  .err {
+    color: var(--fail-ink);
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .topic {
+    position: relative;
+  }
+  .topic input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .topic span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--light-line);
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: all 0.15s var(--ease);
+  }
+  .topic input:checked + span {
+    background: var(--ink-0);
+    border-color: var(--ink-0);
+    color: var(--ink-text);
+  }
+  .topic input:focus-visible + span {
+    outline: 2px solid var(--signal);
+    outline-offset: 2px;
+  }
+  .submit-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 20px;
+  }
+  .small {
+    font-size: 0.86rem;
+  }
+  .small a {
+    color: var(--light-mute);
+  }
+  .err-summary {
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #fff5f7;
+    border: 1.5px solid var(--fail-ink);
+    color: var(--fail-ink);
+  }
+  .err-summary :global(ul) {
+    margin: 6px 0 0;
+    padding-left: 18px;
+  }
+  .err-summary :global(a) {
+    color: var(--fail-ink);
+  }
+  .status:empty {
+    display: none;
+  }
+  .status {
+    padding: 16px;
+    border-radius: 10px;
+    border: 1.5px solid var(--light-line);
+  }
+  .status[data-kind="ok"] {
+    border-color: var(--ok-ink);
+    background: #effaf4;
+  }
+  .status[data-kind="fail"] {
+    border-color: var(--fail-ink);
+    background: #fff5f7;
+  }
+  .status :global(a) {
+    color: inherit;
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-form]");
+  if (form) {
+    // Preselect the topic from ?topic= (links from CTAs across the site).
+    const topic = new URLSearchParams(location.search).get("topic");
+    if (topic) {
+      const r = form.querySelector<HTMLInputElement>(`input[name="topic"][value="${CSS.escape(topic)}"]`);
+      if (r) r.checked = true;
+    }
+
+    const summary = form.querySelector<HTMLElement>("[data-err-summary]")!;
+    const status = form.querySelector<HTMLElement>("[data-status]")!;
+    const submit = form.querySelector<HTMLButtonElement>("[data-submit]")!;
+    const fields = [
+      { el: form.querySelector<HTMLInputElement>("#f-name")!, err: "e-name", label: "Your name", ok: (v: string) => v.trim().length > 1 },
+      { el: form.querySelector<HTMLInputElement>("#f-email")!, err: "e-email", label: "Work email", ok: (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) },
+      { el: form.querySelector<HTMLTextAreaElement>("#f-msg")!, err: "e-msg", label: "What needs to be built or solved", ok: (v: string) => v.trim().length > 9 },
+    ];
+
+    const check = (f: (typeof fields)[number]) => {
+      const valid = f.ok(f.el.value);
+      f.el.setAttribute("aria-invalid", String(!valid));
+      document.getElementById(f.err)!.hidden = valid;
+      return valid;
+    };
+    fields.forEach((f) =>
+      f.el.addEventListener("blur", () => {
+        if (f.el.value) check(f);
+      }),
+    );
+    fields.forEach((f) =>
+      f.el.addEventListener("input", () => {
+        if (f.el.getAttribute("aria-invalid") === "true") check(f);
+      }),
+    );
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const bad = fields.filter((f) => !check(f));
+      if (bad.length) {
+        summary.innerHTML = `<strong>Please fix ${bad.length === 1 ? "1 thing" : `${bad.length} things`}:</strong><ul>${bad
+          .map((f) => `<li><a href="#${f.el.id}">${f.label}</a></li>`)
+          .join("")}</ul>`;
+        summary.hidden = false;
+        summary.focus();
+        return;
+      }
+      summary.hidden = true;
+      if (form.dataset.mode === "email") {
+        // No verified form endpoint: open the visitor's email app with the message filled in.
+        const data = new FormData(form);
+        const topicLabel = form.querySelector<HTMLInputElement>('input[name="topic"]:checked')?.nextElementSibling?.textContent ?? "";
+        const body = [
+          `Topic: ${topicLabel}`,
+          `Name: ${data.get("name")}`,
+          `Email: ${data.get("email")}`,
+          data.get("company") ? `Company / project: ${data.get("company")}` : "",
+          "",
+          String(data.get("message") ?? ""),
+          "",
+          data.get("timeline_budget") ? `Timeline / budget: ${data.get("timeline_budget")}` : "",
+        ].filter((l, i, a) => l !== "" || (a[i - 1] ?? "") !== "").join("\n");
+        const subject = `Enquiry: ${topicLabel}`;
+        location.href = `mailto:nerd@nerdshouse.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        status.dataset.kind = "ok";
+        status.innerHTML = 'Your email app should open with your message ready to send. If it doesn\'t, email us at <a href="mailto:nerd@nerdshouse.com">nerd@nerdshouse.com</a>.';
+        return;
+      }
+      submit.disabled = true;
+      submit.textContent = "Sending…";
+      status.removeAttribute("data-kind");
+      status.textContent = "";
+      try {
+        const res = await fetch(form.action, {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: new FormData(form),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || json.success === false) throw new Error(json.message || "Request failed");
+        status.dataset.kind = "ok";
+        status.innerHTML = "<strong>Thank you — your message has been sent.</strong> We'll reply by email.";
+        form.reset();
+        fields.forEach((f) => f.el.removeAttribute("aria-invalid"));
+      } catch {
+        status.dataset.kind = "fail";
+        status.innerHTML = 'Your message could not be sent. Please email us at <a href="mailto:nerd@nerdshouse.com">nerd@nerdshouse.com</a> — nothing you typed has been lost.';
+      } finally {
+        submit.disabled = false;
+        submit.innerHTML = "Send message";
+      }
+    });
+
+    summary.addEventListener("click", (e) => {
+      const a = (e.target as HTMLElement).closest("a");
+      if (!a) return;
+      e.preventDefault();
+      document.querySelector<HTMLElement>(a.getAttribute("href")!)?.focus();
+    });
+  }
+</script>

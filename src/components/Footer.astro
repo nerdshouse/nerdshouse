@@ -1,0 +1,123 @@
+---
+import Wordmark from "./Wordmark.astro";
+import { CAPABILITIES, SITE } from "@data/site";
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer s-dark">
+  <div class="wrap">
+    <div class="ft-grid">
+      <div class="ft-intro">
+        <p class="h4">Technology and AI engineering partner.</p>
+        <p class="muted">Building software for ambitious businesses from {SITE.locality}, {SITE.region}, since {SITE.foundedLabel}.</p>
+        <address class="ft-contact">
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <a href={`tel:${SITE.phoneHref}`}>{SITE.phone}</a>
+        </address>
+      </div>
+      <nav aria-label="Capabilities" class="ft-col">
+        <p class="eyebrow eyebrow--plain">Capabilities</p>
+        <ul>
+          {CAPABILITIES.map((c) => <li><a href={`/${c.slug}`}>{c.short}</a></li>)}
+        </ul>
+      </nav>
+      <nav aria-label="Company" class="ft-col">
+        <p class="eyebrow eyebrow--plain">Company</p>
+        <ul>
+          <li><a href="/work">Work</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/career">Careers</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Legal" class="ft-col">
+        <p class="eyebrow eyebrow--plain">Legal</p>
+        <ul>
+          <li><a href="/privacy-policy">Privacy policy</a></li>
+          <li><a href="/terms-and-conditions">Terms &amp; conditions</a></li>
+          <li><a href="/refund-policy">Refund policy</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="ft-mark" aria-hidden="true">
+      <Wordmark size="xl" />
+    </div>
+    <div class="ft-base mono">
+      <span>© {year} {SITE.legalName}</span>
+      <span>{SITE.locality}, {SITE.region}, {SITE.country}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-top: clamp(64px, 8vw, 112px);
+    border-top: 1px solid var(--ink-line-soft);
+    overflow: hidden;
+  }
+  .ft-grid {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .ft-intro {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 12px;
+    max-width: 380px;
+  }
+  @media (min-width: 900px) {
+    .ft-grid {
+      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    }
+    .ft-intro {
+      grid-column: auto;
+    }
+  }
+  .ft-contact {
+    font-style: normal;
+    display: grid;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .ft-contact a,
+  .ft-col a {
+    color: var(--ink-text);
+    text-decoration: none;
+    display: inline-block;
+    padding: 4px 0;
+  }
+  .ft-contact a:hover,
+  .ft-col a:hover {
+    color: var(--signal);
+  }
+  .ft-col ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+    margin-top: 14px;
+  }
+  .ft-col a {
+    color: var(--ink-mute);
+  }
+  .ft-mark {
+    margin-top: clamp(56px, 8vw, 96px);
+    color: var(--ink-2);
+    line-height: 0.8;
+    margin-bottom: -0.04em;
+    user-select: none;
+  }
+  .ft-mark :global(.wm) {
+    color: #1b1f26;
+  }
+  .ft-base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-block: 22px 28px;
+    border-top: 1px solid var(--ink-line-soft);
+    color: var(--ink-faint);
+  }
+</style>

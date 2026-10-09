@@ -1,0 +1,27 @@
+---
+interface Props {
+  good: string[];
+  bad: string[];
+  theme?: string;
+}
+const { good, bad, theme = "s-light" } = Astro.props;
+---
+
+<section class:list={["section section--tight", theme]} aria-labelledby="fit-title">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">Fit</p>
+      <h2 id="fit-title" class="h2">Is this right for you?</h2>
+    </header>
+    <div class="fit">
+      <div>
+        <h3 class="h4"><span class="dot" data-state="ok"></span>A good fit if</h3>
+        <ul>{good.map((g) => <li>{g}</li>)}</ul>
+      </div>
+      <div class="not">
+        <h3 class="h4"><span class="dot"></span>Probably not a fit if</h3>
+        <ul>{bad.map((g) => <li>{g}</li>)}</ul>
+      </div>
+    </div>
+  </div>
+</section>

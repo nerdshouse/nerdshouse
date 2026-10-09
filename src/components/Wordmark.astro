@@ -1,0 +1,72 @@
+---
+// The Nerdshouse wordmark. The "o" is a status light — the brand's signature:
+// every system we build should tell you what state it is in.
+interface Props {
+  size?: "s" | "m" | "xl";
+  state?: "signal" | "ok" | "wait" | "fail";
+  live?: boolean;
+  class?: string;
+}
+const { size = "m", state = "signal", live = false, class: cls = "" } = Astro.props;
+---
+
+<span class:list={["wm", `wm--${size}`, cls]} data-dot={state} data-live={live ? "" : undefined}>
+  <span aria-hidden="true">nerdsh<span class="wm-dot"></span>use</span>
+  <span class="sr-only">Nerdshouse</span>
+</span>
+
+<style>
+  .wm {
+    font-family: var(--font-display);
+    font-weight: 760;
+    letter-spacing: -0.055em;
+    line-height: 1;
+    display: inline-flex;
+    align-items: baseline;
+    white-space: nowrap;
+    color: inherit;
+  }
+  .wm--s {
+    font-size: 1.45rem;
+  }
+  .wm--m {
+    font-size: 1.7rem;
+  }
+  .wm--xl {
+    font-size: clamp(3.5rem, 15.5vw, 15rem);
+    letter-spacing: -0.06em;
+  }
+  .wm-dot {
+    display: inline-block;
+    width: 0.5em;
+    height: 0.5em;
+    margin-inline: 0.035em 0.03em;
+    border-radius: 50%;
+    background: var(--signal);
+    transform: translateY(0.01em);
+    transition: background-color 0.4s var(--ease);
+  }
+  [data-dot="ok"] .wm-dot {
+    background: var(--ok);
+  }
+  [data-dot="wait"] .wm-dot {
+    background: var(--wait);
+  }
+  [data-dot="fail"] .wm-dot {
+    background: var(--fail);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-live] .wm-dot {
+      animation: wm-pulse 3.2s var(--ease) infinite;
+    }
+  }
+  @keyframes wm-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 106, 43, 0);
+    }
+    40% {
+      box-shadow: 0 0 0 0.12em rgba(255, 106, 43, 0.25);
+    }
+  }
+</style>

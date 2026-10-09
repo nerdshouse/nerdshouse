@@ -1,0 +1,74 @@
+---
+import Base from "./Base.astro";
+const { frontmatter } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, "");
+---
+
+<Base
+  title={`${frontmatter.title} | Nerdshouse Technologies LLP`}
+  description={`${frontmatter.title} for Nerdshouse Technologies LLP, Surat, Gujarat. Last updated ${frontmatter.date}.`}
+  breadcrumbs={[{ name: frontmatter.title, path }]}
+>
+  <section class="lg-head s-dark">
+    <div class="wrap">
+      <p class="eyebrow">Legal</p>
+      <h1 class="h1" style="margin-top:20px">{frontmatter.title}</h1>
+      <p class="mono faint" style="margin-top:16px">Last updated {frontmatter.date}</p>
+    </div>
+  </section>
+  <section class="s-white lg-body">
+    <div class="wrap">
+      <div class="legal">
+        <slot />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lg-head {
+    padding-block: clamp(56px, 8vw, 104px) clamp(40px, 5vw, 64px);
+  }
+  .lg-body {
+    padding-block: clamp(48px, 6vw, 88px);
+  }
+  .legal {
+    overflow-wrap: anywhere;
+    max-width: 72ch;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--light-mute);
+  }
+  /* The markdown carries its own H1/H2s; demote visually and keep one page H1. */
+  .legal :global(h1) {
+    display: none;
+  }
+  .legal :global(h2) {
+    font-family: var(--font-display);
+    color: var(--light-text);
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 2.2em 0 0.6em;
+  }
+  .legal :global(h3) {
+    font-family: var(--font-display);
+    color: var(--light-text);
+    font-size: 1.2rem;
+    margin: 1.8em 0 0.4em;
+  }
+  .legal :global(p),
+  .legal :global(ul),
+  .legal :global(ol) {
+    margin: 0 0 1em;
+  }
+  .legal :global(li) {
+    margin-bottom: 0.4em;
+  }
+  .legal :global(strong) {
+    color: var(--light-text);
+  }
+  .legal :global(a) {
+    color: var(--signal-ink);
+  }
+</style>

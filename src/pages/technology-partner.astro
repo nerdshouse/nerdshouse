@@ -1,0 +1,349 @@
+---
+import Base from "@layouts/Base.astro";
+import ServiceHero from "@components/ServiceHero.astro";
+import DecisionLog from "@components/visuals/DecisionLog.astro";
+import Fit from "@components/Fit.astro";
+import Faq from "@components/Faq.astro";
+import CtaBand from "@components/CtaBand.astro";
+import Icon from "@components/Icon.astro";
+import { SITE } from "@data/site";
+
+const title = "Technology Partner & Ongoing Engineering Team | Nerdshouse";
+const description =
+  "An ongoing technology partner: architecture and roadmap decisions, steady delivery, maintenance and reliability — with a written record of what shipped and why.";
+
+const service = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Technology Partnership",
+  serviceType: "Ongoing software engineering and technical leadership",
+  description,
+  url: `${SITE.url}/technology-partner`,
+  provider: { "@id": `${SITE.url}/#organization` },
+};
+
+const compare = [
+  { k: "Who decides what to build", a: "You, alone, ticket by ticket", b: "Together, against a written roadmap" },
+  { k: "Architecture", a: "Whatever was fastest for the last task", b: "Decisions recorded with the reasons and trade-offs" },
+  { k: "Knowledge", a: "Leaves when the freelancer does", b: "In docs, release notes and decision records you own" },
+  { k: "Risk", a: "You hear about problems when customers do", b: "Risks listed and owned before they become incidents" },
+  { k: "Cost", a: "Lowest per task, highest over a year", b: "A predictable monthly scope you can plan around" },
+];
+
+const rhythm = [
+  { when: "Every week", what: "A short written update: what shipped, what's in progress, what's blocked.", out: "Update · staging link" },
+  { when: "Every month", what: "A review of the roadmap, decisions made, risks and what's next.", out: "Monthly review" },
+  { when: "Every quarter", what: "Architecture, security basics, hosting costs and technical debt, reviewed properly.", out: "Health check" },
+];
+
+const covers = [
+  "Roadmap and prioritisation with you",
+  "Architecture and build-vs-buy decisions",
+  "Features, fixes and integrations",
+  "Dependency updates and security patches",
+  "Performance and reliability work",
+  "Hiring help: briefs and technical interviews",
+];
+const notCovers = [
+  "Unlimited work — scope is agreed each month",
+  "24/7 on-call, unless we agree it separately",
+  "Systems we haven't reviewed first",
+];
+
+const faq = [
+  {
+    q: "How is this different from a retainer for maintenance?",
+    a: "<p>Maintenance keeps things running. A partnership also decides what's worth building next, what to stop doing, and how the system should evolve — and writes those decisions down.</p>",
+  },
+  {
+    q: "Can you take over a system someone else built?",
+    a: "<p>Yes, after a technical review. We read the code, the hosting setup and the data, and tell you plainly what's healthy, what's risky and what we'd change first.</p>",
+  },
+  {
+    q: "Do you replace our in-house developers?",
+    a: "<p>No — we can work alongside them, review their work, or help you hire. Some partnerships end with us handing over to a team we helped build. That's a good outcome.</p>",
+  },
+  {
+    q: "How is it priced?",
+    a: "<p>A monthly scope agreed with you, based on the work your systems need. We'll discuss it once we understand the system — not before.</p>",
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={[service]} breadcrumbs={[{ name: "Technology Partnership", path: "/technology-partner" }]}>
+  <ServiceHero
+    index="04"
+    name="Technology Partnership"
+    title="The technical judgement of a senior team, <em>every month.</em>"
+    lede="After launch, every decision — fix, rebuild, buy, hire — needs a technical opinion you can trust. We become that opinion, and the team that delivers on it."
+    cta={{ label: "Ask for a technical review", href: "/contact?topic=review" }}
+    secondary={{ label: "How it compares", href: "#compare" }}
+  >
+    <div class="hero-log">
+      <DecisionLog />
+    </div>
+  </ServiceHero>
+
+  <section class="section s-light" id="compare" aria-labelledby="cmp-title">
+    <div class="wrap">
+      <header class="sec-head sec-head--split">
+        <div>
+          <p class="eyebrow">Not outsourcing</p>
+          <h2 id="cmp-title" class="h2" style="margin-top:18px">Ad-hoc help vs. a partner.</h2>
+        </div>
+        <p class="lede">Both get tasks done. Only one leaves you with a system — and a business — that's easier to run every month.</p>
+      </header>
+      <div class="cmp" role="table" aria-label="Ad-hoc outsourcing compared with a technology partnership">
+        <div class="cmp-row cmp-row--h" role="row">
+          <span role="columnheader" class="sr-only">Area</span>
+          <span role="columnheader" class="mono">Ad-hoc outsourcing</span>
+          <span role="columnheader" class="mono accent">Technology partner</span>
+        </div>
+        {
+          compare.map((r) => (
+            <div class="cmp-row" role="row">
+              <span role="rowheader" class="cmp-k">{r.k}</span>
+              <span role="cell" class="cmp-a">
+                <span class="cmp-l mono">Ad-hoc</span>
+                {r.a}
+              </span>
+              <span role="cell" class="cmp-b">
+                <span class="cmp-l mono">Partner</span>
+                {r.b}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section s-white" aria-labelledby="rh-title">
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="eyebrow">The rhythm</p>
+        <h2 id="rh-title" class="h2">You always know what happened, and why.</h2>
+      </header>
+      <ol class="rhythm">
+        {
+          rhythm.map((r, i) => (
+            <li class="rh" style={`--i:${i}`}>
+              <p class="rh-when">{r.when}</p>
+              <p class="rh-what">{r.what}</p>
+              <span class="chip">
+                <span class="dot" data-state="ok" />
+                {r.out}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section s-dark-2" aria-labelledby="sc-title">
+    <div class="wrap sc-grid">
+      <header>
+        <p class="eyebrow">Scope and limits</p>
+        <h2 id="sc-title" class="h2" style="margin-top:18px">Clear about what's included.</h2>
+        <p class="lede" style="margin-top:20px">A partnership works when both sides know the boundaries. These are ours.</p>
+      </header>
+      <div class="sc-lists">
+        <div>
+          <h3 class="h4 sc-h"><span class="dot" data-state="ok"></span>Covers</h3>
+          <ul>{covers.map((c) => <li>{c}</li>)}</ul>
+        </div>
+        <div>
+          <h3 class="h4 sc-h"><span class="dot"></span>Doesn't cover</h3>
+          <ul class="sc-not">{notCovers.map((c) => <li>{c}</li>)}</ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight s-light" aria-labelledby="start-title">
+    <div class="wrap start">
+      <div>
+        <p class="eyebrow">Where most partnerships start</p>
+        <h2 id="start-title" class="h3" style="margin-top:14px">A technical review of what you have.</h2>
+      </div>
+      <ul class="start-list">
+        <li><span class="mono accent">01</span> We read the code, hosting, data model and integrations.</li>
+        <li><span class="mono accent">02</span> You get a written report: what's healthy, what's risky, what to do first.</li>
+        <li><span class="mono accent">03</span> You decide whether to work with us on it. The report is yours either way.</li>
+      </ul>
+      <a href="/contact?topic=review" class="btn btn--ink">Ask for a review <Icon name="arrow" /></a>
+    </div>
+  </section>
+
+  <Fit
+    good={[
+      "Software is central to how your business runs or sells",
+      "You have no senior technical person in-house, or they need support",
+      "You'd rather plan a year of improvements than react week to week",
+    ]}
+    bad={[
+      "You need a one-off task done as cheaply as possible",
+      "You want unlimited work for a fixed fee",
+      "Decisions about the product change daily without a clear owner",
+    ]}
+  />
+  <Faq items={faq} />
+  <CtaBand title="Get a second opinion on your system." lede="Tell us what you run and what worries you about it. We'll suggest the right starting point — usually a short technical review." />
+</Base>
+
+<style>
+  .hero-log {
+    max-width: 980px;
+  }
+  .cmp {
+    border-top: 1px solid var(--line);
+  }
+  .cmp-row {
+    display: grid;
+    gap: 10px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 860px) {
+    .cmp-row {
+      grid-template-columns: 0.8fr 1fr 1fr;
+      gap: 32px;
+      align-items: baseline;
+    }
+  }
+  .cmp-row--h {
+    display: none;
+  }
+  @media (min-width: 860px) {
+    .cmp-row--h {
+      display: grid;
+      padding: 10px 0;
+    }
+    .cmp-row .cmp-l {
+      display: none;
+    }
+  }
+  .cmp-row--h span {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+  }
+  .cmp-row--h .accent {
+    color: var(--accent-text);
+  }
+  .cmp-k {
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-size: 1.15rem;
+    letter-spacing: -0.015em;
+  }
+  .cmp-a {
+    color: var(--mute);
+  }
+  .cmp-b {
+    font-weight: 500;
+  }
+  .cmp-l {
+    display: inline-block;
+    min-width: 72px;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .cmp-b .cmp-l {
+    color: var(--accent-text);
+  }
+  .rhythm {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .rh {
+    display: grid;
+    gap: 12px;
+    padding: clamp(22px, 3vw, 32px);
+    border-radius: var(--radius-l);
+    border: 1px solid var(--line);
+    background: var(--panel);
+    margin-left: calc(var(--i) * clamp(0px, 4vw, 64px));
+  }
+  @media (min-width: 900px) {
+    .rh {
+      grid-template-columns: 220px 1fr auto;
+      align-items: center;
+      gap: 32px;
+    }
+  }
+  .rh-when {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+    letter-spacing: -0.03em;
+  }
+  .rh .chip {
+    width: fit-content;
+    color: var(--text);
+  }
+  .sc-grid {
+    display: grid;
+    gap: 48px;
+  }
+  @media (min-width: 1000px) {
+    .sc-grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 80px;
+    }
+  }
+  .sc-lists {
+    display: grid;
+    gap: 32px;
+  }
+  @media (min-width: 640px) {
+    .sc-lists {
+      grid-template-columns: 1.3fr 1fr;
+    }
+  }
+  .sc-h {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .sc-lists ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    border-top: 1px solid var(--ink-line);
+  }
+  .sc-lists li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ink-line);
+  }
+  .sc-not li {
+    color: var(--ink-mute);
+  }
+  .start {
+    display: grid;
+    gap: 28px;
+    align-items: center;
+  }
+  @media (min-width: 1100px) {
+    .start {
+      grid-template-columns: 0.9fr 1.4fr auto;
+      gap: 56px;
+    }
+  }
+  .start-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .start-list li {
+    display: flex;
+    gap: 12px;
+  }
+</style>

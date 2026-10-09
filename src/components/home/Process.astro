@@ -1,0 +1,106 @@
+---
+const stages = [
+  { n: "01", t: "Understand", d: "A conversation about the problem, the people involved and the constraints — budget, deadlines, existing systems.", out: "Written problem brief" },
+  { n: "02", t: "Validate", d: "We test the riskiest part first: the integration, the data source or the AI behaviour nobody is sure about.", out: "Spike or prototype, with a go / no-go" },
+  { n: "03", t: "Design", d: "Screens, data model and architecture, agreed with you before we build at full speed.", out: "Clickable prototype · architecture note" },
+  { n: "04", t: "Build in increments", d: "Working software you can open and try as it grows — not a big reveal at the end.", out: "Staging link · release notes" },
+  { n: "05", t: "Test & launch", d: "Real roles, real data, real phones. Then a release with a plan for the first days in use.", out: "Launch checklist · handover docs" },
+  { n: "06", t: "Measure & improve", d: "We watch how it is used and fix, refine or extend — or hand it over cleanly.", out: "Review of what's working" },
+];
+---
+
+<section class="proc s-light section" aria-labelledby="proc-title">
+  <div class="wrap">
+    <header class="sec-head sec-head--split">
+      <div>
+        <p class="eyebrow">How a project runs</p>
+        <h2 id="proc-title" class="h2" style="margin-top:18px">Six stages. Something real at the end of each.</h2>
+      </div>
+      <p class="lede">You should never have to take progress on trust. Each stage ends with something you can read, click or use.</p>
+    </header>
+    <ol class="track">
+      {
+        stages.map((s) => (
+          <li class="stage" data-reveal>
+            <span class="stage-n mono">{s.n}</span>
+            <h3 class="h4 stage-t">{s.t}</h3>
+            <p class="stage-d muted">{s.d}</p>
+            <p class="stage-out mono">
+              <span class="dot" data-state="ok" />
+              {s.out}
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .track {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    counter-reset: s;
+  }
+  @media (min-width: 720px) {
+    .track {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 24px;
+    }
+  }
+  @media (min-width: 1200px) {
+    .track {
+      grid-template-columns: repeat(6, 1fr);
+      column-gap: 0;
+    }
+  }
+  .stage {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 10px;
+    padding: 26px 22px 26px 0;
+    border-top: 1px solid var(--line);
+  }
+  @media (min-width: 1200px) {
+    .stage {
+      padding: 30px 22px 0 0;
+      border-top: 2px solid var(--line);
+    }
+    .stage::before {
+      content: "";
+      position: absolute;
+      top: -6px;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--signal-ink);
+    }
+  }
+  .stage-n {
+    color: var(--accent-text);
+  }
+  .stage-t {
+    font-size: 1.25rem;
+  }
+  .stage-d {
+    font-size: 0.94rem;
+    line-height: 1.5;
+  }
+  .stage-out {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    font-size: 0.72rem;
+    width: fit-content;
+    color: var(--text);
+  }
+</style>

@@ -1,0 +1,176 @@
+---
+import "../styles/global.css";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import { SITE } from "@data/site";
+// Preload the two above-the-fold fonts so text doesn't reflow (CLS) when they swap in.
+// Vite resolves these to the same hashed files the @font-face rules use.
+import displayFont from "@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url";
+import bodyFont from "@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2?url";
+
+interface Crumb {
+  name: string;
+  path: string;
+}
+interface Props {
+  title: string; // full <title>, unique per page
+  description: string;
+  jsonLd?: Record<string, unknown>[];
+  breadcrumbs?: Crumb[];
+  noindex?: boolean;
+  ogImage?: string;
+}
+
+const { title, description, jsonLd = [], breadcrumbs, noindex = false, ogImage = "/og.png" } = Astro.props;
+// Non-production deployments set PUBLIC_PREVIEW=true: visible banner + noindex on every page.
+const isPreview = import.meta.env.PUBLIC_PREVIEW === "true";
+// GA4 loads only in production, only when an ID is configured (see private/launch/ANALYTICS_PLAN.md).
+const ga4Id = isPreview ? undefined : (import.meta.env.PUBLIC_GA4_ID as string | undefined);
+const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
+const canonical = new URL(pathname, SITE.url).toString();
+const ogUrl = new URL(ogImage, SITE.url).toString();
+
+const organization = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${SITE.url}/#organization`,
+  name: SITE.name,
+  legalName: SITE.legalName,
+  url: SITE.url,
+  logo: `${SITE.url}/icon-512.png`,
+  foundingDate: SITE.founded,
+  email: SITE.email,
+  telephone: SITE.phone,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: SITE.locality,
+    addressRegion: SITE.region,
+    addressCountry: "IN",
+  },
+};
+
+const crumbLd = breadcrumbs && {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [{ name: "Home", path: "/" }, ...breadcrumbs].map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.path, SITE.url).toString(),
+  })),
+};
+
+const ld = [organization, ...(crumbLd ? [crumbLd] : []), ...jsonLd];
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {(noindex || isPreview) && <meta name="robots" content={isPreview ? "noindex, nofollow" : "noindex, follow"} />}
+    {
+      ga4Id && (
+        <>
+          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`} />
+          <script is:inline define:vars={{ ga4Id }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", ga4Id);
+          </script>
+        </>
+      )
+    }
+    <meta name="theme-color" content="#08090c" />
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_IN" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {ld.map((obj) => <script type="application/ld+json" set:html={JSON.stringify(obj)} />)}
+
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    {
+      isPreview && (
+        <div class="preview-bar" role="note">
+          <span class="dot" data-state="wait" /> Preview build: not the live nerdshouse.com. Unverified items are marked.
+        </div>
+      )
+    }
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      // Progressive reveal. Content is visible by default; this only adds motion.
+      const els = document.querySelectorAll<HTMLElement>("[data-reveal]");
+      if ("IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        // Only hide below-the-fold elements, and only once this script is running.
+        els.forEach((el) => {
+          if (el.getBoundingClientRect().top < innerHeight) el.classList.add("is-in");
+        });
+        document.documentElement.classList.add("reveal");
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add("is-in");
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: "0px 0px -8% 0px" },
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        els.forEach((el) => el.classList.add("is-in"));
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  main:focus {
+    outline: none;
+  }
+  .preview-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: var(--wait);
+    color: var(--ink-0);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-align: center;
+  }
+  .preview-bar .dot {
+    background: var(--ink-0);
+  }
+</style>

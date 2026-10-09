@@ -1,0 +1,478 @@
+---
+// Interactive explainer: Before / After + six components of the engineering layer,
+// each readable two ways (plain English and for a technical buyer).
+// Without JS: both modes and all six explanations render in sequence.
+const sources = ["Spreadsheets", "WhatsApp groups", "Store & checkout", "Payment gateway", "Leads & CRM"];
+const manual = ["Orders re-typed into a sheet", "Payments matched by hand at month-end", "Status chased on WhatsApp", "The same customer saved three times"];
+const beforeOut = ["Numbers that disagree", "Problems found late", "Reports rebuilt by hand every Monday"];
+const afterOut = [
+  { t: "Live dashboard", d: "Today's bookings, payments and exceptions" },
+  { t: "Exception alerts", d: "A mismatch goes to its owner, on WhatsApp" },
+  { t: "Scheduled reports", d: "In your inbox — no copy-paste" },
+  { t: "One source of truth", d: "Every team reads the same record" },
+];
+const parts = [
+  {
+    id: "connectors",
+    name: "Connectors",
+    plain: "We plug into the tools you already use — your store, payments, WhatsApp and sheets — instead of asking your team to switch.",
+    tech: "A client or webhook per source, idempotency keys on every write, and original payloads stored so events can be replayed.",
+    notice: "New orders appear without anyone typing them.",
+  },
+  {
+    id: "validation",
+    name: "Validation",
+    plain: "Bad or duplicate data is stopped at the door, with a reason a person can read.",
+    tech: "Schema checks on every inbound event, de-duplication rules, and reconciliation jobs that flag mismatches instead of silently overwriting.",
+    notice: "A double-submitted booking never becomes two jobs.",
+  },
+  {
+    id: "permissions",
+    name: "Permissions",
+    plain: "People and automations can only see and change what their role allows.",
+    tech: "Role-based access per module, enforced on the server; scoped credentials and least-privilege tool access for AI agents.",
+    notice: "Sales sees their own leads. The owner sees everything.",
+  },
+  {
+    id: "retries",
+    name: "Retries & queues",
+    plain: "When a provider is slow or down, the work waits and tries again. It isn't lost.",
+    tech: "Background jobs with timeouts and back-off, a holding queue for events that keep failing, and an alert after the final attempt.",
+    notice: "A payment-gateway hiccup doesn't leave a booking half-paid.",
+  },
+  {
+    id: "observability",
+    name: "Observability",
+    plain: "We can see what happened, when and why — usually before you have to ask.",
+    tech: "Activity logs, audit history on important records, and alerts that reach a person when something needs attention.",
+    notice: "“Who changed this?” always has an answer.",
+  },
+  {
+    id: "review",
+    name: "Human review",
+    plain: "Anything risky or uncertain goes to a person to approve, with the context to decide quickly.",
+    tech: "Approval queues, clear thresholds for what is automated and what is reviewed, and every decision recorded against the record.",
+    notice: "Refunds and discounts are approved, not assumed.",
+  },
+];
+---
+
+<section class="eng s-dark section" aria-labelledby="eng-title" data-eng>
+  <div class="wrap">
+    <header class="sec-head sec-head--split">
+      <div>
+        <p class="eyebrow">Show the engineering</p>
+        <h2 id="eng-title" class="h2" style="margin-top:18px">What actually sits between your tools.</h2>
+      </div>
+      <p class="lede">
+        The difference between a fragile automation and a dependable system is a layer most people never see. Switch between
+        before and after, then open each part.
+      </p>
+    </header>
+
+    <div class="eng-switch" role="tablist" aria-label="Compare" data-eng-tabs hidden>
+      <button type="button" role="tab" id="eng-tab-before" aria-controls="eng-before" aria-selected="false" tabindex="-1">Before</button>
+      <button type="button" role="tab" id="eng-tab-after" aria-controls="eng-after" aria-selected="true">After <span class="sw-sub">with the engineering layer</span></button>
+    </div>
+
+    <!-- BEFORE -->
+    <div class="eng-board eng-board--before" id="eng-before" role="tabpanel" aria-labelledby="eng-tab-before" data-eng-panel="before">
+      <h3 class="sr-only js-hide">Before</h3>
+      <div class="col">
+        <p class="col-h mono">Where the data lives</p>
+        <ul class="nodes">{sources.map((s) => <li class="node">{s}</li>)}</ul>
+      </div>
+      <div class="flow" aria-hidden="true"><span></span></div>
+      <div class="col col--mid">
+        <p class="col-h mono">What holds it together</p>
+        <ul class="manual">
+          {
+            manual.map((m) => (
+              <li data-state="fail">
+                <span class="dot" />
+                {m}
+              </li>
+            ))
+          }
+        </ul>
+        <p class="manual-foot mono">Glue: people's time and memory</p>
+      </div>
+      <div class="flow" aria-hidden="true"><span></span></div>
+      <div class="col">
+        <p class="col-h mono">What the business sees</p>
+        <ul class="nodes nodes--out">{beforeOut.map((s) => <li class="node node--bad">{s}</li>)}</ul>
+      </div>
+    </div>
+
+    <!-- AFTER -->
+    <div class="eng-board eng-board--after" id="eng-after" role="tabpanel" aria-labelledby="eng-tab-after" data-eng-panel="after">
+      <h3 class="sr-only js-hide">After</h3>
+      <div class="col">
+        <p class="col-h mono">Where the data lives</p>
+        <ul class="nodes">{sources.map((s) => <li class="node node--on">{s}</li>)}</ul>
+      </div>
+      <div class="flow flow--on" aria-hidden="true"><span></span></div>
+      <div class="col col--mid layer">
+        <p class="col-h mono">The engineering layer <span class="faint">— select a part</span></p>
+        <div class="parts" role="tablist" aria-label="Parts of the engineering layer" data-parts>
+          {
+            parts.map((p, i) => (
+              <button
+                type="button"
+                role="tab"
+                class="part"
+                id={`part-tab-${p.id}`}
+                aria-controls={`part-${p.id}`}
+                aria-selected={i === 1 ? "true" : "false"}
+                tabindex={i === 1 ? 0 : -1}
+                data-part={p.id}
+              >
+                <span class="part-n mono">{String(i + 1).padStart(2, "0")}</span>
+                {p.name}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <div class="flow flow--on" aria-hidden="true"><span></span></div>
+      <div class="col">
+        <p class="col-h mono">What the business sees</p>
+        <ul class="nodes nodes--out">
+          {
+            afterOut.map((o) => (
+              <li class="node node--good">
+                <strong>{o.t}</strong>
+                <span>{o.d}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="details">
+        {
+          parts.map((p, i) => (
+            <div class="detail" id={`part-${p.id}`} role="tabpanel" aria-labelledby={`part-tab-${p.id}`} data-detail={p.id} tabindex="0">
+              <p class="detail-name h3">
+                <span class="mono accent">{String(i + 1).padStart(2, "0")}</span> {p.name}
+              </p>
+              <div class="detail-grid">
+                <div>
+                  <p class="detail-h mono">In plain English</p>
+                  <p>{p.plain}</p>
+                </div>
+                <div>
+                  <p class="detail-h mono">For your CTO</p>
+                  <p class="muted">{p.tech}</p>
+                </div>
+                <div class="detail-notice">
+                  <p class="detail-h mono">You'd notice it when</p>
+                  <p>{p.notice}</p>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .eng-switch {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--ink-line);
+    border-radius: 999px;
+    margin-bottom: 24px;
+    background: var(--ink-1);
+  }
+  .eng-switch button {
+    min-height: 42px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-mute);
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+  .sw-sub {
+    font-weight: 450;
+    opacity: 0.75;
+  }
+  @media (max-width: 520px) {
+    .sw-sub {
+      display: none;
+    }
+  }
+  .eng-switch button[aria-selected="true"] {
+    background: var(--ink-text);
+    color: var(--ink-0);
+  }
+  .eng-switch button:first-child[aria-selected="true"] {
+    background: var(--fail);
+  }
+
+  .eng-board {
+    display: grid;
+    gap: 12px;
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-l);
+    padding: clamp(16px, 2.5vw, 32px);
+    background: var(--ink-1);
+  }
+  .eng-board + .eng-board {
+    margin-top: 16px;
+  }
+  .eng-board--before {
+    background: repeating-linear-gradient(135deg, transparent 0 12px, rgba(255, 92, 122, 0.025) 12px 24px), var(--ink-1);
+  }
+  @media (min-width: 1024px) {
+    .eng-board {
+      grid-template-columns: minmax(0, 0.8fr) 40px minmax(0, 1.25fr) 40px minmax(0, 0.95fr);
+      align-items: stretch;
+    }
+    .details {
+      grid-column: 1 / -1;
+    }
+  }
+  .col-h {
+    color: var(--ink-faint);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .nodes {
+    display: grid;
+    gap: 8px;
+  }
+  .node {
+    padding: 11px 14px;
+    border-radius: 9px;
+    border: 1px solid var(--ink-line-soft);
+    color: var(--ink-mute);
+    font-size: 0.92rem;
+    display: grid;
+    gap: 2px;
+  }
+  .node--on {
+    color: var(--ink-text);
+    border-color: var(--ink-line);
+    background: var(--ink-2);
+  }
+  .node--bad {
+    color: var(--fail);
+    border-color: rgba(255, 92, 122, 0.3);
+  }
+  .node--good {
+    border-color: rgba(61, 220, 151, 0.3);
+    background: rgba(61, 220, 151, 0.04);
+    color: var(--ink-text);
+  }
+  .node--good span {
+    color: var(--ink-mute);
+    font-size: 0.84rem;
+  }
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+  }
+  .flow span {
+    width: 1px;
+    height: 28px;
+    background: repeating-linear-gradient(180deg, var(--fail) 0 4px, transparent 4px 8px);
+  }
+  .flow--on span {
+    background: linear-gradient(180deg, var(--signal), var(--ok));
+  }
+  @media (min-width: 1024px) {
+    .flow span {
+      width: 100%;
+      height: 1px;
+      background: repeating-linear-gradient(90deg, var(--fail) 0 4px, transparent 4px 8px);
+    }
+    .flow--on span {
+      background: linear-gradient(90deg, var(--signal), var(--ok));
+      position: relative;
+    }
+  }
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .flow--on span::after {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--ink-text);
+      animation: packet 2.4s linear infinite;
+    }
+  }
+  @keyframes packet {
+    from {
+      left: 0;
+    }
+    to {
+      left: calc(100% - 5px);
+    }
+  }
+  .manual {
+    display: grid;
+    gap: 8px;
+  }
+  .manual li {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 14px;
+    border-radius: 9px;
+    border: 1px dashed rgba(255, 92, 122, 0.4);
+    font-size: 0.92rem;
+  }
+  .manual-foot {
+    margin-top: 12px;
+    color: var(--fail);
+    font-size: 0.72rem;
+  }
+  .layer {
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 106, 43, 0.35);
+    background: linear-gradient(180deg, rgba(255, 106, 43, 0.06), transparent 60%);
+  }
+  .parts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .part {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 10px 12px;
+    text-align: left;
+    border-radius: 9px;
+    border: 1px solid var(--ink-line);
+    background: var(--ink-0);
+    color: var(--ink-text);
+    font-weight: 600;
+    font-size: 0.93rem;
+    transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease);
+  }
+  .part:hover {
+    border-color: var(--ink-mute);
+  }
+  .part[aria-selected="true"] {
+    border-color: var(--signal);
+    background: rgba(255, 106, 43, 0.1);
+  }
+  .part-n {
+    color: var(--signal);
+    font-size: 0.7rem;
+  }
+  .details {
+    display: grid;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .detail {
+    border-top: 1px solid var(--ink-line);
+    padding-top: 20px;
+  }
+  .detail-name {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .detail-name .mono {
+    font-size: 0.8rem;
+  }
+  .detail-grid {
+    display: grid;
+    gap: 18px;
+  }
+  @media (min-width: 860px) {
+    .detail-grid {
+      grid-template-columns: 1fr 1fr 0.8fr;
+      gap: 32px;
+    }
+  }
+  .detail-h {
+    color: var(--ink-faint);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .detail-notice {
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: var(--ink-2);
+    border-left: 2px solid var(--ok);
+  }
+  :global(.js) .js-hide {
+    display: none;
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-eng]");
+  if (root) {
+    // Before / After
+    const tabsWrap = root.querySelector<HTMLElement>("[data-eng-tabs]")!;
+    const tabs = [...tabsWrap.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...root.querySelectorAll<HTMLElement>("[data-eng-panel]")];
+    tabsWrap.hidden = false;
+    const show = (i: number, focus = false) => {
+      tabs.forEach((t, k) => {
+        t.setAttribute("aria-selected", String(k === i));
+        t.tabIndex = k === i ? 0 : -1;
+      });
+      panels.forEach((p, k) => (p.hidden = k !== i));
+      if (focus) tabs[i].focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener("click", () => show(i));
+      t.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          show(i === 0 ? 1 : 0, true);
+        }
+      });
+    });
+    show(0);
+
+    // Layer parts
+    const parts = [...root.querySelectorAll<HTMLButtonElement>("[data-part]")];
+    const details = [...root.querySelectorAll<HTMLElement>("[data-detail]")];
+    const pick = (i: number, focus = false) => {
+      parts.forEach((p, k) => {
+        p.setAttribute("aria-selected", String(k === i));
+        p.tabIndex = k === i ? 0 : -1;
+      });
+      details.forEach((d, k) => (d.hidden = k !== i));
+      if (focus) parts[i].focus();
+    };
+    parts.forEach((p, i) => {
+      p.addEventListener("click", () => pick(i));
+      p.addEventListener("keydown", (e) => {
+        const n = parts.length;
+        const map: Record<string, number> = { ArrowRight: 1, ArrowDown: 2, ArrowLeft: -1, ArrowUp: -2 };
+        if (e.key in map) {
+          e.preventDefault();
+          pick((i + map[e.key] + n) % n, true);
+        }
+      });
+    });
+    pick(1);
+  }
+</script>
